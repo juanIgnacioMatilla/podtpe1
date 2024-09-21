@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package doctorPagerService;
+import "models/doctor.proto";
+service DoctorPagerService {
+  rpc RegisterDoctor (RegisterDoctorRequest) returns (RegisterDoctorResponse);
+  rpc UnregisterDoctor (UnregisterDoctorRequest) returns (UnregisterDoctorResponse);
+}
+
+message RegisterDoctorRequest {
+  string doctorName = 1;
+}
+
+message RegisterDoctorResponse {
+  bool success = 1;
+  optional string errorMessage = 2;
+  optional models.doctor.Doctor doctor = 3;
+}
+
+message UnregisterDoctorRequest {
+  string doctor_name = 1;
+}
+
+message UnregisterDoctorResponse {
+  bool success = 1;
+  optional string errorMessage = 2;
+  optional models.doctor.Doctor doctor = 3;
+}
+
+

@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package emergencyCareService;
+import "google/protobuf/empty.proto";
+import "models/room.proto";
+import "models/patient.proto";
+import "models/doctor.proto";
+
+service EmergencyCareService {
+  rpc CarePatient(CarePatientRequest) returns (CarePatientResponse);
+
+  rpc CareAllPatients(google.protobuf.Empty) returns (stream models.room.Room);
+
+  rpc DischargePatient(DischargePatientRequest) returns (DischargePatientResponse);
+}
+
+message CarePatientRequest {
+  int32 roomNumber = 1;
+}
+
+message CarePatientResponse {
+  bool success = 1;
+  optional string errorMessage = 2;
+  optional models.room.Room room = 3;
+}
+
+
+message DischargePatientRequest {
+  int32 roomNumber = 1;
+  string doctorName = 2;
+  string patientName = 3;
+}
+
+message DischargePatientResponse {
+  bool success = 1;
+  optional string errorMessage = 2;
+  optional int32 roomNumber = 3;
+  optional models.patient.Patient patient = 4;
+  optional models.doctor.Doctor doctor = 5;
+}

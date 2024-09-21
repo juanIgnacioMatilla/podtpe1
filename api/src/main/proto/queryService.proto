@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package queryService;
+import "google/protobuf/empty.proto";
+import "models/room.proto";
+import "models/patient.proto";
+import "models/doctor.proto";
+
+service QueryService {
+  rpc QueryRooms (google.protobuf.Empty) returns (QueryRoomsResponse);
+  rpc QueryWaitingRoom (QueryWaitingRoomRequest) returns (QueryWaitingRoomResponse);
+  rpc QueryCares (QueryCaresRequest) returns (QueryCaresResponse);
+}
+
+message QueryRoomsResponse {
+  repeated models.room.Room rooms = 1;
+}
+
+
+message QueryWaitingRoomRequest {
+  int32 roomNumber = 1;
+}
+
+message QueryWaitingRoomResponse {
+  bool success = 1;
+  optional string errorMessage = 2;
+  repeated models.patient.Patient patients = 3;
+}
+
+message QueryCaresRequest {
+  optional int32 room_number = 1;
+}
+
+message QueryCaresResponse {
+  bool success = 1;
+  optional string errorMessage = 2;
+  repeated CareHistory care_history = 3;
+}
+
+message CareHistory {
+  int32 room_number = 1;
+  models.patient.Patient patient = 2;
+  models.doctor.Doctor doctor = 3;
+}

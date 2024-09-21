@@ -1,0 +1,14 @@
+syntax = "proto3";
+package models.doctor;
+
+message Doctor {
+  string doctorName = 1;
+  int32 doctorLevel = 2;
+  DoctorStatus status = 3;
+}
+
+enum DoctorStatus {
+  AVAILABLE = 0;
+  ATTENDING = 1;
+  UNAVAILABLE = 2;
+}

@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package waitingRoomService;
+import "models/patient.proto";
+service WaitingRoomService {
+  rpc AddPatient(AddPatientRequest) returns (AddPatientResponse);
+
+  rpc UpdatePatientLevel(UpdatePatientLevelRequest) returns (UpdatePatientLevelResponse);
+
+  rpc CheckPatientWaitingTime(CheckPatientWaitingTimeRequest) returns (CheckPatientWaitingTimeResponse);
+}
+
+message AddPatientRequest {
+  string patient_name = 1;
+  int32 emergency_level = 2;
+}
+
+message AddPatientResponse {
+  bool success = 1;
+  optional string errorMessage = 2;
+  optional models.patient.Patient patient = 3;
+}
+
+message UpdatePatientLevelRequest {
+  string patient_name = 1;
+  int32 new_emergency_level = 2;
+}
+
+message UpdatePatientLevelResponse {
+  bool success = 1;
+  optional string errorMessage = 2;
+  optional models.patient.Patient patient = 3;
+}
+
+message CheckPatientWaitingTimeRequest {
+  string patient_name = 1;
+}
+
+message CheckPatientWaitingTimeResponse {
+  bool success = 1;
+  optional string errorMessage = 2;
+  optional models.patient.Patient patient = 3;
+  optional int32 patients_ahead = 4;
+}

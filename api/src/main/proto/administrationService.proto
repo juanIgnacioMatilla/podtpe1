@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package administrationService;
+import "google/protobuf/empty.proto";
+import "models/doctor.proto";
+
+service AdministrationService {
+  rpc AddRoom(google.protobuf.Empty) returns (AddRoomResponse);
+
+  rpc AddDoctor(AddDoctorRequest) returns (AddDoctorResponse);
+
+  rpc SetDoctorAvailability(SetDoctorAvailabilityRequest) returns (SetDoctorAvailabilityResponse);
+
+  rpc CheckDoctorAvailability(CheckDoctorAvailabilityRequest) returns (CheckDoctorAvailabilityResponse);
+}
+message AddRoomResponse{
+  int32 roomNumber = 1;
+}
+
+message AddDoctorRequest {
+  string doctorName = 1;
+  int32 level = 2;
+}
+
+message AddDoctorResponse {
+  bool success = 1;
+  optional string errorMessage = 2;
+  optional models.doctor.Doctor doctor = 3;
+}
+
+message SetDoctorAvailabilityRequest {
+  string doctorName = 1;
+  string availability = 2;
+}
+
+message SetDoctorAvailabilityResponse {
+  bool success = 1;
+  optional string errorMessage = 2;
+  optional models.doctor.Doctor doctor = 3;
+}
+
+message CheckDoctorAvailabilityRequest {
+  string doctorName = 1;
+}
+
+message CheckDoctorAvailabilityResponse {
+  bool success = 1;
+  optional string errorMessage = 2;
+  models.doctor.Doctor doctor = 3;
+}
