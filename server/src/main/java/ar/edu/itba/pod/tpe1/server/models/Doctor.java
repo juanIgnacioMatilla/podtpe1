@@ -5,8 +5,7 @@ import java.util.Objects;
 public class Doctor{
     private String name;
     private Integer maxEmergencies;
-    private Boolean available; //hay que ver si usamos el boolean porque tiene 3 estados en realidad
-    private Boolean pageable;
+    private Status status;
 
     public Doctor(String name,Integer maxEmergencies){
         this.name = name;
@@ -21,12 +20,8 @@ public class Doctor{
         return maxEmergencies;
     }
 
-    public Boolean getAvailable(){
-        return available;
-    }
-
-    public Boolean getPageable(){
-        return pageable;
+    public Status getStatus(){
+        return status;
     }
 
     @Override
@@ -48,4 +43,31 @@ public class Doctor{
     public int hashCode(){
         return Objects.hash(this.getName());
     }
+
+
+    public enum Status {
+        AVAILABLE,
+        UNAVAILABLE,
+        ATTENDING;
+
+        public static Status fromString(String status) {
+            switch (status.toUpperCase()) {
+                case "AVAILABLE":
+                    return AVAILABLE;
+                case "UNAVAILABLE":
+                    return UNAVAILABLE;
+                case "ATTENDING":
+                    return ATTENDING;
+                default:
+                    throw new IllegalArgumentException("Unknown status: " + status);
+            }
+        }
+
+        @Override
+        public String toString() {
+            return name();
+        }
+    }
+
+
 }
