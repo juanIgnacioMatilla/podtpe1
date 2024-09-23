@@ -2,32 +2,31 @@ package ar.edu.itba.pod.tpe1.server.models;
 
 import java.util.Objects;
 
-public class Patient{
+public class Patient {
     private String name;
     private Integer emergencyLevel;
 
-    public Patient(String name, Integer emergencyLevel){
+    public Patient(String name, Integer emergencyLevel) {
         this.name = name;
         this.emergencyLevel = emergencyLevel;
     }
 
-    public String getName(){
+    public String getName() {
         return name;
     }
 
-    public Integer getEmergencyLevel(){
+    public Integer getEmergencyLevel() {
         return emergencyLevel;
     }
 
-    public void setEmergencyLevel(Integer emergencyLevel){
+    public void setEmergencyLevel(Integer emergencyLevel) {
         this.emergencyLevel = emergencyLevel;
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return "Patient " + this.getName() + " (" + this.getEmergencyLevel() + ")";
     }
-    
 
     @Override
     public boolean equals(Object o) {
@@ -40,7 +39,7 @@ public class Patient{
     }
 
     @Override
-    public final int hashCode(){
+    public final int hashCode() {
         return Objects.hash(name);
     }
-}   
+}

@@ -2,33 +2,62 @@ package ar.edu.itba.pod.tpe1.server.models;
 
 import java.util.Objects;
 
-public class Doctor{
+public class Doctor {
     private String name;
     private Integer maxEmergencies;
     private Status status;
+    private Boolean pageable;
+    private Integer currentEmergencies;
 
-    public Doctor(String name,Integer maxEmergencies){
+    public Doctor(String name, Integer maxEmergencies) {
         this.name = name;
         this.maxEmergencies = maxEmergencies;
+        this.status = Status.UNAVAILABLE;
+        this.pageable = false;
+        this.currentEmergencies = 0;
     }
 
-    public String getName(){
+    public String getName() {
         return name;
     }
 
-    public Integer getMaxEmergencies(){
+    public Integer getMaxEmergencies() {
         return maxEmergencies;
     }
 
-    public Status getStatus(){
+    public Status getStatus() {
         return status;
     }
 
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public void setPageable(Boolean pageable) {
+        this.pageable = pageable;
+    }
+
+    public Boolean getPageable() {
+        return pageable;
+    }
+
+    public Integer getCurrentEmergencies() {
+        return currentEmergencies;
+    }
+
+    public void setMaxEmergencies(Integer maxEmergencies) {
+        this.maxEmergencies = maxEmergencies;
+    }
+
+    public Boolean canCare() {
+        return (this.getStatus() == Status.AVAILABLE) && (this.getCurrentEmergencies() < this.getMaxEmergencies());
+    }
+
     @Override
-    public String toString(){
+    public String toString() {
         return "Doctor " + this.getName() + " (" + this.getMaxEmergencies() + ")";
     }
-    
+
     @Override
     public boolean equals(Object o) {
         if (o == this)
@@ -40,10 +69,9 @@ public class Doctor{
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return Objects.hash(this.getName());
     }
-
 
     public enum Status {
         AVAILABLE,
@@ -68,6 +96,5 @@ public class Doctor{
             return name();
         }
     }
-
 
 }
