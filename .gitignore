@@ -1,0 +1,9 @@
+.project
+.settings/*
+.classpath
+server/target/*
+client/target/*
+api/target/*
+api/.settings/*
+client/.settings/*
+server/.settings/*
