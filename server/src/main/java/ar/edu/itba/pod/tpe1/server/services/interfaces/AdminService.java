@@ -1,18 +1,19 @@
 package ar.edu.itba.pod.tpe1.server.services.interfaces;
 
 import ar.edu.itba.pod.tpe1.server.models.Doctor;
+import models.doctor.DoctorOuterClass;
 
 /**
  * InnerAdminServicd
  */
 public interface AdminService {
 
-    void addRoom();
+    int addRoom();
 
     Doctor addDoctor(String name, Integer maxLevel);
 
-    Doctor setDoctor(Doctor doctor, Doctor.Status availability);
+    Doctor setDoctor(String doctorName, DoctorOuterClass.DoctorStatus availability);
 
-    Doctor.Status checkDoctor(Doctor doctor);
+    Doctor getDoctor(String name);
 
 }

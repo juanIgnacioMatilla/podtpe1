@@ -2,8 +2,8 @@ syntax = "proto3";
 package models.doctor;
 
 message Doctor {
-  string doctorName = 1;
-  int32 doctorLevel = 2;
+  string name = 1;
+  int32 level = 2;
   DoctorStatus status = 3;
 }
 

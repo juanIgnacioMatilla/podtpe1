@@ -5,10 +5,12 @@ import ar.edu.itba.pod.tpe1.server.models.Patient;
 
 public interface WaitingRoomService {
 
-    Patient addPatient(Patient patient);
+    Patient addPatient(String name, int level);
 
-    Patient updateLevel(Patient patient, Integer level);
+    Patient updateLevel(String patientName, Integer level);
 
-    Integer checkPatient(Patient patient);
+    Integer checkPatient(String patientName);
+
+    Patient getPatient(String name);
 
 }

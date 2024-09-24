@@ -7,7 +7,7 @@ service WaitingRoomService {
 
   rpc UpdatePatientLevel(UpdatePatientLevelRequest) returns (UpdatePatientLevelResponse);
 
-  rpc CheckPatientWaitingTime(CheckPatientWaitingTimeRequest) returns (CheckPatientWaitingTimeResponse);
+  rpc CheckPatient(CheckPatientWaitingTimeRequest) returns (CheckPatientWaitingTimeResponse);
 }
 
 message AddPatientRequest {
@@ -40,5 +40,5 @@ message CheckPatientWaitingTimeResponse {
   bool success = 1;
   optional string errorMessage = 2;
   optional models.patient.Patient patient = 3;
-  optional int32 patients_ahead = 4;
+  optional int32 patientsAhead = 4;
 }

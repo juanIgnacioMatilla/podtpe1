@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import ar.edu.itba.pod.tpe1.server.models.Doctor;
+import models.doctor.DoctorOuterClass;
 
 public class DoctorRepository {
     private Set<Doctor> doctors;
@@ -23,9 +24,9 @@ public class DoctorRepository {
         return doctors;
     }
 
-    public Optional<Doctor> getDoctor(Doctor doctor) {
+    public Optional<Doctor> getDoctorByName(String name) {
         return doctors.stream()
-                .filter(d -> d.equals(doctor))
+                .filter(d -> d.getName().equals(name))
                 .findFirst();
     }
 
@@ -49,12 +50,12 @@ public class DoctorRepository {
                 });
     }
 
-    public void setAttending(Doctor toAttend) {
-        doctors.stream()
-                .filter(d -> d.equals(toAttend))
+    public Optional<Doctor> setStatus(Doctor doctor, DoctorOuterClass.DoctorStatus status) {
+        return doctors.stream()
+                .filter(d -> d.equals(doctor))
                 .findFirst()
                 .map(d -> {
-                    d.setStatus(Doctor.Status.ATTENDING);
+                    d.setStatus(status);
                     return d;
                 });
     }

@@ -1,12 +1,11 @@
 package ar.edu.itba.pod.tpe1.server.services;
 
-import java.util.Set;
 
 import ar.edu.itba.pod.tpe1.server.models.Doctor;
-import ar.edu.itba.pod.tpe1.server.models.Room;
 import ar.edu.itba.pod.tpe1.server.repositories.DoctorRepository;
 import ar.edu.itba.pod.tpe1.server.repositories.RoomRepository;
 import ar.edu.itba.pod.tpe1.server.services.interfaces.AdminService;
+import models.doctor.DoctorOuterClass;
 
 public class AdminServiceImpl implements AdminService {
     DoctorRepository doctorRepository;
@@ -18,8 +17,8 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void addRoom() {
-        roomRepo.addRoom();
+    public int addRoom() {
+        return roomRepo.addRoom().getId();
     }
 
     @Override
@@ -33,23 +32,15 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public Doctor setDoctor(Doctor doctor, Doctor.Status status) {
-        return doctorRepository.getDoctors().stream()
-                .filter(d -> d.equals(doctor))
-                .findFirst()
-                .map(d -> {
-                    d.setStatus(status);
-                    return d;
-                }).get();
+    public Doctor setDoctor(String doctorName, DoctorOuterClass.DoctorStatus status) {
+        Doctor doctor = getDoctor(doctorName);
+        //TODO: check wheter or not the doctr it can change his status
+        return doctorRepository.setStatus(doctor,status).orElseThrow();
     }
 
+
     @Override
-    public Doctor.Status checkDoctor(Doctor doctor) {
-        return doctorRepository.getDoctors().stream()
-                .filter(d -> d.equals(doctor))
-                .findFirst()
-                .map(d -> {
-                    return d.getStatus();
-                }).get();
+    public Doctor getDoctor(String name) {
+        return doctorRepository.getDoctorByName(name).orElseThrow();
     }
 }

@@ -1,18 +1,20 @@
 package ar.edu.itba.pod.tpe1.server.models;
 
+import models.doctor.DoctorOuterClass;
+
 import java.util.Objects;
 
 public class Doctor {
     private String name;
-    private Integer maxEmergencies;
-    private Status status;
+    private Integer level;
+    private DoctorOuterClass.DoctorStatus status;
     private Boolean pageable;
     private Integer currentEmergencies;
 
-    public Doctor(String name, Integer maxEmergencies) {
+    public Doctor(String name, Integer level) {
         this.name = name;
-        this.maxEmergencies = maxEmergencies;
-        this.status = Status.UNAVAILABLE;
+        this.level = level;
+        this.status = DoctorOuterClass.DoctorStatus.UNAVAILABLE;
         this.pageable = false;
         this.currentEmergencies = 0;
     }
@@ -21,15 +23,15 @@ public class Doctor {
         return name;
     }
 
-    public Integer getMaxEmergencies() {
-        return maxEmergencies;
+    public Integer getLevel() {
+        return level;
     }
 
-    public Status getStatus() {
+    public DoctorOuterClass.DoctorStatus getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(DoctorOuterClass.DoctorStatus status) {
         this.status = status;
     }
 
@@ -41,21 +43,17 @@ public class Doctor {
         return pageable;
     }
 
-    public Integer getCurrentEmergencies() {
-        return currentEmergencies;
-    }
-
-    public void setMaxEmergencies(Integer maxEmergencies) {
-        this.maxEmergencies = maxEmergencies;
+    public void setLevel(Integer level) {
+        this.level = level;
     }
 
     public Boolean canCare() {
-        return (this.getStatus() == Status.AVAILABLE) && (this.getCurrentEmergencies() < this.getMaxEmergencies());
+        return this.getStatus() == DoctorOuterClass.DoctorStatus.AVAILABLE;
     }
 
     @Override
     public String toString() {
-        return "Doctor " + this.getName() + " (" + this.getMaxEmergencies() + ")";
+        return "Doctor " + this.getName() + " (" + this.getLevel() + ")";
     }
 
     @Override
@@ -71,30 +69,6 @@ public class Doctor {
     @Override
     public int hashCode() {
         return Objects.hash(this.getName());
-    }
-
-    public enum Status {
-        AVAILABLE,
-        UNAVAILABLE,
-        ATTENDING;
-
-        public static Status fromString(String status) {
-            switch (status.toUpperCase()) {
-                case "AVAILABLE":
-                    return AVAILABLE;
-                case "UNAVAILABLE":
-                    return UNAVAILABLE;
-                case "ATTENDING":
-                    return ATTENDING;
-                default:
-                    throw new IllegalArgumentException("Unknown status: " + status);
-            }
-        }
-
-        @Override
-        public String toString() {
-            return name();
-        }
     }
 
 }

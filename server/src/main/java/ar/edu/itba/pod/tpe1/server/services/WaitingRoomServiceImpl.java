@@ -18,35 +18,41 @@ public class WaitingRoomServiceImpl implements WaitingRoomService {
     }
 
     @Override
-    public Patient addPatient(Patient newPatient) {
-        Integer level = newPatient.getEmergencyLevel();
+    public Patient addPatient(String name, int level) {
         if (level <= 0 || level > 5)
             throw new RuntimeException("level not allowed");
-        return patientRepo.addPatient(newPatient);
+        return patientRepo.addPatient(new Patient(name,level));
     }
 
     @Override
-    public Patient updateLevel(Patient patient, Integer level) {
+    public Patient updateLevel(String name, Integer level) {
+        Patient patient = patientRepo.getPatient(name).orElseThrow();
         if (level <= 0 || level > 5)
             throw new RuntimeException("level not allowed");
         return patientRepo.getPatients().get(patient.getEmergencyLevel()).stream()
-                .filter(p -> p.equals(patient))
+                .filter(p -> p.getName().equals(name))
                 .findFirst()
                 .map(p -> {
                     p.setEmergencyLevel(level);
                     return p;
-                }).get();
+                }).orElseThrow();
     }
 
     @Override
-    public Integer checkPatient(Patient patient) {
+    public Integer checkPatient(String name) {
         Map<Integer, List<Patient>> patients = patientRepo.getPatients();
-        Integer out = 0;
+        Patient patient = patientRepo.getPatient(name).orElseThrow();
+        int out = 0;
         for (int i = 5; i > patient.getEmergencyLevel(); i--) {
             out += patients.get(i).size();
         }
         out += patients.get(patient.getEmergencyLevel()).indexOf(patient);
         return out;
+    }
+
+    @Override
+    public Patient getPatient(String name) {
+        return patientRepo.getPatient(name).orElseThrow();
     }
 
 }

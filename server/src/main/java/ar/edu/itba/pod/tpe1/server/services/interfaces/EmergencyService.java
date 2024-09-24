@@ -10,10 +10,10 @@ import ar.edu.itba.pod.tpe1.server.models.Room;
  */
 public interface EmergencyService {
 
-    CareHistory carePatient(Room room);
+    Room carePatient(Integer roomId);
 
     void careAllPatients();
 
-    boolean dischargePatient(Room room, Doctor doctor, Patient patient);
+    Room dischargePatient(Integer roomId, String doctorName, String patientName);
 
 }

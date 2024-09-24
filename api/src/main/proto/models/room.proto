@@ -5,13 +5,8 @@ import "models/patient.proto";
 
 message Room {
   int32 roomNumber = 1;
-  RoomStatus status = 2;
-  models.patient.Patient patient = 3;
-  models.doctor.Doctor doctor = 4;
-}
-
-enum RoomStatus {
-  FREE = 0;
-  OCCUPIED = 1;
+  bool occupied = 2;
+  optional models.patient.Patient patient = 3;
+  optional models.doctor.Doctor doctor = 4;
 }
 

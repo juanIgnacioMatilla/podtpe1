@@ -1,11 +1,6 @@
 package ar.edu.itba.pod.tpe1.server.repositories;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import ar.edu.itba.pod.tpe1.server.models.Patient;
@@ -34,6 +29,13 @@ public class PatientRepository {
         if (toCare == null || toCare.getEmergencyLevel() >= 5 || toCare.getEmergencyLevel() <= 0)
             return;
         patients.get(toCare.getEmergencyLevel()).remove(toCare);
+    }
+
+    public Optional<Patient> getPatient(String name){
+        return patients.values().stream()
+                .flatMap(List::stream)
+                .filter(patient -> patient.getName().equals(name))
+                .findFirst();
     }
 
 }

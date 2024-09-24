@@ -1,0 +1,11 @@
+syntax = "proto3";
+package models.careHistory;
+import "models/doctor.proto";
+import "models/patient.proto";
+
+message CareHistory {
+  int32 room_number = 1;
+  models.patient.Patient patient = 2;
+  models.doctor.Doctor doctor = 3;
+}
+
