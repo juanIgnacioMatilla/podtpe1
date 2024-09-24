@@ -9,14 +9,12 @@ public class Doctor {
     private Integer level;
     private DoctorOuterClass.DoctorStatus status;
     private Boolean pageable;
-    private Integer currentEmergencies;
 
     public Doctor(String name, Integer level) {
         this.name = name;
         this.level = level;
         this.status = DoctorOuterClass.DoctorStatus.UNAVAILABLE;
         this.pageable = false;
-        this.currentEmergencies = 0;
     }
 
     public String getName() {

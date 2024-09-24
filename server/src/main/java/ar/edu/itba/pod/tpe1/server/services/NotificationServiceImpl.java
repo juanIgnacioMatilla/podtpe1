@@ -10,7 +10,7 @@ import ar.edu.itba.pod.tpe1.server.services.interfaces.NotificationService;
 /**
  * NotificationService
  */
-public class NotificationServiceImpl implements NotificationService {
+public class    NotificationServiceImpl implements NotificationService {
     DoctorRepository doctorRepo;
 
     public NotificationServiceImpl(DoctorRepository doctorRepo) {

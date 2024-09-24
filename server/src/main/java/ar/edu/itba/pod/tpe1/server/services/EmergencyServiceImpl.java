@@ -1,9 +1,6 @@
 package ar.edu.itba.pod.tpe1.server.services;
 
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
-import java.util.List;
+import java.util.*;
 
 import ar.edu.itba.pod.tpe1.server.models.CareHistory;
 import ar.edu.itba.pod.tpe1.server.models.Doctor;
@@ -34,17 +31,10 @@ public class EmergencyServiceImpl implements EmergencyService {
 
     public Room carePatient(Integer roomId) {
         Set<Room> rooms = roomRepo.getRooms();
-        if (!rooms.contains(room)) {
+        Optional<Room> maybeRoom = rooms.stream().filter(r -> r.getId() == roomId).findFirst();
+        if(maybeRoom.isEmpty())
             throw new RuntimeException("Room doesn't exist");
-        }
-        for (Room aux : rooms) {
-            if (aux.equals(room)) {
-                if (aux.getOccupied()) {
-                    throw new RuntimeException("Room is occupied");
-                }
-            }
-        }
-
+        Room room = maybeRoom.get();
         Patient toCare = null;
         Map<Integer, List<Patient>> patients = patientRepo.getPatients();
         Set<Doctor> doctors = doctorRepo.getDoctors();
@@ -78,8 +68,10 @@ public class EmergencyServiceImpl implements EmergencyService {
         Set<Room> rooms = roomRepo.getRooms();
         Map<Integer, List<Patient>> patients = patientRepo.getPatients();
         Set<Doctor> doctors = doctorRepo.getDoctors();
+        Room aux = null;
         if (rooms.isEmpty())
             throw new RuntimeException("No rooms registered");
+
         for (Room room : rooms) {
             aux = carePatient(room.getId());
 
