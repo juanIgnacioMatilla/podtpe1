@@ -3,16 +3,16 @@ package ar.edu.itba.pod.tpe1.server.models;
 public class CareHistory {
     private final Doctor doctor;
     private final Patient patient;
-    private final Room room;
+    private final Integer roomId;
 
-    public CareHistory(Doctor doctor, Patient patient, Room room) {
+    public CareHistory(Doctor doctor, Patient patient, Integer roomId) {
         this.doctor = doctor;
         this.patient = patient;
-        this.room = room;
+        this.roomId = roomId;
     }
 
-    public Room getRoom() {
-        return room;
+    public Integer getRoomId() {
+        return roomId;
     }
 
     public Doctor getDoctor() {

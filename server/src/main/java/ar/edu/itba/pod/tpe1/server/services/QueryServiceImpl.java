@@ -1,12 +1,7 @@
 package ar.edu.itba.pod.tpe1.server.services;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.HashMap;
-import java.util.HashSet;
 
 import ar.edu.itba.pod.tpe1.server.models.CareHistory;
 import ar.edu.itba.pod.tpe1.server.models.Patient;
@@ -49,7 +44,7 @@ public class QueryServiceImpl implements QueryService {
     public Queue<CareHistory> queryCares(Integer room) {
         Queue<CareHistory> out = careHistoryRepo.getHistory();
         if (room != null) {
-            out.removeIf(careHistory -> careHistory.getRoom().getId() != room);
+            out.removeIf(careHistory -> !Objects.equals(careHistory.getRoomId(), room));
         }
         if (out.isEmpty())
             throw new RuntimeException("No patients have been care yet");

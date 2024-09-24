@@ -3,15 +3,14 @@ syntax = "proto3";
 package administrationService;
 import "google/protobuf/empty.proto";
 import "models/doctor.proto";
-
 service AdministrationService {
   rpc AddRoom(google.protobuf.Empty) returns (AddRoomResponse);
 
   rpc AddDoctor(AddDoctorRequest) returns (AddDoctorResponse);
 
-  rpc SetDoctorAvailability(SetDoctorAvailabilityRequest) returns (SetDoctorAvailabilityResponse);
+  rpc SetDoctor(SetDoctorStatusRequest) returns (SetDoctorStatusResponse);
 
-  rpc CheckDoctorAvailability(CheckDoctorAvailabilityRequest) returns (CheckDoctorAvailabilityResponse);
+  rpc CheckDoctor(CheckDoctorStatusRequest) returns (CheckDoctorStatusResponse);
 }
 message AddRoomResponse{
   int32 roomNumber = 1;
@@ -28,22 +27,22 @@ message AddDoctorResponse {
   optional models.doctor.Doctor doctor = 3;
 }
 
-message SetDoctorAvailabilityRequest {
+message SetDoctorStatusRequest {
   string doctorName = 1;
-  string availability = 2;
+  models.doctor.DoctorStatus status = 2;
 }
 
-message SetDoctorAvailabilityResponse {
+message SetDoctorStatusResponse {
   bool success = 1;
   optional string errorMessage = 2;
   optional models.doctor.Doctor doctor = 3;
 }
 
-message CheckDoctorAvailabilityRequest {
+message CheckDoctorStatusRequest {
   string doctorName = 1;
 }
 
-message CheckDoctorAvailabilityResponse {
+message CheckDoctorStatusResponse {
   bool success = 1;
   optional string errorMessage = 2;
   models.doctor.Doctor doctor = 3;

@@ -1,12 +1,11 @@
 package ar.edu.itba.pod.tpe1.server.services;
 
-import java.util.Set;
 
 import ar.edu.itba.pod.tpe1.server.models.Doctor;
-import ar.edu.itba.pod.tpe1.server.models.Room;
 import ar.edu.itba.pod.tpe1.server.repositories.DoctorRepository;
 import ar.edu.itba.pod.tpe1.server.repositories.RoomRepository;
 import ar.edu.itba.pod.tpe1.server.services.interfaces.AdminService;
+import models.doctor.DoctorOuterClass;
 
 public class AdminServiceImpl implements AdminService {
     DoctorRepository doctorRepository;
@@ -18,37 +17,30 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void addRoom() {
-        roomRepo.addRoom();
+    public int addRoom() {
+        return roomRepo.addRoom().getId();
     }
 
     @Override
-    public boolean addDoctor(String name, Integer maxLevel) {
+    public Doctor addDoctor(String name, Integer maxLevel) {
         if (maxLevel <= 0 || maxLevel >= 9)
-            return false;
+            throw new RuntimeException("maxLevel not permited");
         Doctor doctor = new Doctor(name, maxLevel);
-        return doctorRepository.addDoctor(doctor);
+        if (!doctorRepository.addDoctor(doctor))
+            throw new RuntimeException("doctor already exists");
+        return doctor;
     }
 
     @Override
-    public boolean setDoctor(String name, Doctor.Status status) {
-        Set<Doctor> doctors = doctorRepository.getDoctors();
-        if (!doctors.contains(new Doctor(name, 1)))
-            return false;
-        // deberiamos hacer esto dentro de doctor repository en una funcion
-        // syncrhonized?
-        for (Doctor doctor : doctors) {
-            if (doctor.getName().compareTo(name) == 0)
-                doctor.setStatus(status);
-        }
-        return true;
+    public Doctor setDoctor(String doctorName, DoctorOuterClass.DoctorStatus status) {
+        Doctor doctor = getDoctor(doctorName);
+        //TODO: check wheter or not the doctr it can change his status
+        return doctorRepository.setStatus(doctor,status).orElseThrow();
     }
 
+
     @Override
-    public Doctor.Status checkDoctor(String name) {
-        Doctor doc = doctorRepository.getDoctor(name);
-        if (doc == null)
-            throw new RuntimeException("Doctor doesn't exist");
-        return doc.getStatus();
+    public Doctor getDoctor(String name) {
+        return doctorRepository.getDoctorByName(name).orElseThrow();
     }
 }

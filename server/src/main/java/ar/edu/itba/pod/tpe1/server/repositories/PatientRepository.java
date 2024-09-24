@@ -1,9 +1,6 @@
 package ar.edu.itba.pod.tpe1.server.repositories;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import ar.edu.itba.pod.tpe1.server.models.Patient;
@@ -22,14 +19,23 @@ public class PatientRepository {
         return patients;
     }
 
-    public Boolean addPatient(Patient patient) {
-        return patients.get(patient.getEmergencyLevel()).add(patient);
+    public Patient addPatient(Patient patient) {
+        if (!patients.get(patient.getEmergencyLevel()).add(patient))
+            throw new RuntimeException("Patient already registered");
+        return patient;
     }
 
     public void removeFromWaitingList(Patient toCare) {
         if (toCare == null || toCare.getEmergencyLevel() >= 5 || toCare.getEmergencyLevel() <= 0)
             return;
         patients.get(toCare.getEmergencyLevel()).remove(toCare);
+    }
+
+    public Optional<Patient> getPatient(String name){
+        return patients.values().stream()
+                .flatMap(List::stream)
+                .filter(patient -> patient.getName().equals(name))
+                .findFirst();
     }
 
 }

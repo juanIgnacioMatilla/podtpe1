@@ -18,54 +18,41 @@ public class WaitingRoomServiceImpl implements WaitingRoomService {
     }
 
     @Override
-    public boolean addPatient(Patient newPatient) {
-        Integer level = newPatient.getEmergencyLevel();
+    public Patient addPatient(String name, int level) {
         if (level <= 0 || level > 5)
-            return false;
-        return patientRepo.addPatient(newPatient);
+            throw new RuntimeException("level not allowed");
+        return patientRepo.addPatient(new Patient(name,level));
     }
 
     @Override
-    public boolean updateLevel(String name, Integer level) {
+    public Patient updateLevel(String name, Integer level) {
+        Patient patient = patientRepo.getPatient(name).orElseThrow();
         if (level <= 0 || level > 5)
-            return false;
-        Map<Integer, List<Patient>> allPatients = patientRepo.getPatients();
-        List<Patient> patients = new ArrayList<>();
-        for (int i = 1; i <= 5; i++) {
-            patients.addAll(allPatients.get(i));
-        }
-        Boolean flag = false;
-        for (Patient p : patients) {
-            if (p.getName().compareTo(name) == 0) {
-                p.setEmergencyLevel(level);
-                flag = true;
-            }
-        }
-        return flag;
+            throw new RuntimeException("level not allowed");
+        return patientRepo.getPatients().get(patient.getEmergencyLevel()).stream()
+                .filter(p -> p.getName().equals(name))
+                .findFirst()
+                .map(p -> {
+                    p.setEmergencyLevel(level);
+                    return p;
+                }).orElseThrow();
     }
 
     @Override
     public Integer checkPatient(String name) {
         Map<Integer, List<Patient>> patients = patientRepo.getPatients();
-        Patient a = null;
-        for (Integer lev : patients.keySet()) {
-            for (Patient aux : patients.get(lev)) {
-                if (aux.getName().compareTo(name) == 0) {
-                    a = aux;
-                }
-            }
+        Patient patient = patientRepo.getPatient(name).orElseThrow();
+        int out = 0;
+        for (int i = 5; i > patient.getEmergencyLevel(); i--) {
+            out += patients.get(i).size();
         }
-        if (a == null)
-            throw new RuntimeException("Patient doesn't exist");
-        Integer out = 0;
-        Integer level = 5;
-        while (level > a.getEmergencyLevel()) {
-            out += patients.get(level).size();
-            level--;
-        }
-        // TODO: chequear si indexOf devuelve 0 para la primer posicion.
-        out += patients.get(level).indexOf(name);
+        out += patients.get(patient.getEmergencyLevel()).indexOf(patient);
         return out;
+    }
+
+    @Override
+    public Patient getPatient(String name) {
+        return patientRepo.getPatient(name).orElseThrow();
     }
 
 }
