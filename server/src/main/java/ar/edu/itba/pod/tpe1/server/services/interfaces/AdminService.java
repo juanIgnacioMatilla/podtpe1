@@ -9,10 +9,10 @@ public interface AdminService {
 
     void addRoom();
 
-    boolean addDoctor(String name, Integer maxLevel);
+    Doctor addDoctor(String name, Integer maxLevel);
 
-    boolean setDoctor(String name, Doctor.Status availability);
+    Doctor setDoctor(Doctor doctor, Doctor.Status availability);
 
-    Doctor.Status checkDoctor(String name);
+    Doctor.Status checkDoctor(Doctor doctor);
 
 }

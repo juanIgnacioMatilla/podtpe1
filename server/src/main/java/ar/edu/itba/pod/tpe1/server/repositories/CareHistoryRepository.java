@@ -22,21 +22,24 @@ public class CareHistoryRepository {
         return history;
     }
 
-    public Boolean addToHistory(CareHistory careHistory) {
-        return history.add(careHistory);
+    public CareHistory addToHistory(CareHistory careHistory) {
+        history.add(careHistory);
+        return careHistory;
     }
 
-    public Boolean addToCurrent(CareHistory careHistory) {
-        return currentAppointments.add(careHistory);
+    public CareHistory addToCurrent(CareHistory careHistory) {
+        currentAppointments.add(careHistory);
+        return careHistory;
     }
 
     public Boolean removeFromCurrent(CareHistory careHistory) {
-        for (CareHistory ch : currentAppointments) {
-            if (ch.equals(careHistory)) {
-                history.add(ch);
-                return currentAppointments.remove(ch);
-            }
-        }
-        return false;
+        return currentAppointments.stream()
+                .filter(ch -> ch.equals(careHistory))
+                .findFirst()
+                .map(ch -> {
+                    history.add(ch);
+                    return currentAppointments.remove(ch);
+                })
+                .orElse(false);
     }
 }

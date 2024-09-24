@@ -1,5 +1,6 @@
 package ar.edu.itba.pod.tpe1.server.services;
 
+import java.util.Optional;
 import java.util.Set;
 
 import ar.edu.itba.pod.tpe1.server.models.Doctor;
@@ -16,16 +17,14 @@ public class NotificationServiceImpl implements NotificationService {
         this.doctorRepo = doctorRepo;
     }
 
-    public boolean register(Doctor doctor) {
-        if (doctor == null)
-            throw new RuntimeException("Doctor doesn't exist");
-        return doctorRepo.registerDoctorNotif(doctor);
+    public Doctor register(Doctor doctor) {
+        Optional<Doctor> optDoc = doctorRepo.registerDoctorNotif(doctor);
+        return optDoc.orElseThrow(RuntimeException::new);
     }
 
-    public boolean unregister(Doctor doctor) {
-        if (doctor == null)
-            throw new RuntimeException("Doctor doesn't exist");
-        return doctorRepo.unregisterDoctorNotif(doctor);
+    public Doctor unregister(Doctor doctor) {
+        Optional<Doctor> optDoc = doctorRepo.unregisterDoctorNotif(doctor);
+        return optDoc.orElseThrow(RuntimeException::new);
     }
 
 }

@@ -17,15 +17,19 @@ public class RoomRepository {
         return rooms;
     }
 
-    public Boolean addRoom() {
-        Room room = new Room(rooms.size() + 1);
-        return rooms.add(room);
+    public Room addRoom() {
+        Room aux = new Room(rooms.size() + 1);
+        rooms.add(aux);
+        return aux;
     }
 
     public void setUnavailable(Room room) {
-        for (Room r : rooms) {
-            if (r.equals(room))
-                r.setOccupied(true);
-        }
+        rooms.stream()
+                .filter(r -> r.equals(room))
+                .findFirst()
+                .map(r -> {
+                    r.setOccupied(true);
+                    return r;
+                });
     }
 }

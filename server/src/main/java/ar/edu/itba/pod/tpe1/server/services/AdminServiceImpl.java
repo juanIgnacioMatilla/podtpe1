@@ -23,32 +23,33 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public boolean addDoctor(String name, Integer maxLevel) {
+    public Doctor addDoctor(String name, Integer maxLevel) {
         if (maxLevel <= 0 || maxLevel >= 9)
-            return false;
+            throw new RuntimeException("maxLevel not permited");
         Doctor doctor = new Doctor(name, maxLevel);
-        return doctorRepository.addDoctor(doctor);
+        if (!doctorRepository.addDoctor(doctor))
+            throw new RuntimeException("doctor already exists");
+        return doctor;
     }
 
     @Override
-    public boolean setDoctor(String name, Doctor.Status status) {
-        Set<Doctor> doctors = doctorRepository.getDoctors();
-        if (!doctors.contains(new Doctor(name, 1)))
-            return false;
-        // deberiamos hacer esto dentro de doctor repository en una funcion
-        // syncrhonized?
-        for (Doctor doctor : doctors) {
-            if (doctor.getName().compareTo(name) == 0)
-                doctor.setStatus(status);
-        }
-        return true;
+    public Doctor setDoctor(Doctor doctor, Doctor.Status status) {
+        return doctorRepository.getDoctors().stream()
+                .filter(d -> d.equals(doctor))
+                .findFirst()
+                .map(d -> {
+                    d.setStatus(status);
+                    return d;
+                }).get();
     }
 
     @Override
-    public Doctor.Status checkDoctor(String name) {
-        Doctor doc = doctorRepository.getDoctor(name);
-        if (doc == null)
-            throw new RuntimeException("Doctor doesn't exist");
-        return doc.getStatus();
+    public Doctor.Status checkDoctor(Doctor doctor) {
+        return doctorRepository.getDoctors().stream()
+                .filter(d -> d.equals(doctor))
+                .findFirst()
+                .map(d -> {
+                    return d.getStatus();
+                }).get();
     }
 }

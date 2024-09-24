@@ -29,7 +29,7 @@ public class EmergencyServiceImpl implements EmergencyService {
         this.roomRepo = roomRepository;
     }
 
-    public boolean carePatient(Room room) {
+    public CareHistory carePatient(Room room) {
         Set<Room> rooms = roomRepo.getRooms();
         if (!rooms.contains(room)) {
             throw new RuntimeException("Room doesn't exist");

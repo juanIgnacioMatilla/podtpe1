@@ -1,9 +1,11 @@
 package ar.edu.itba.pod.tpe1.server.repositories;
 
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import ar.edu.itba.pod.tpe1.server.models.Patient;
@@ -22,8 +24,10 @@ public class PatientRepository {
         return patients;
     }
 
-    public Boolean addPatient(Patient patient) {
-        return patients.get(patient.getEmergencyLevel()).add(patient);
+    public Patient addPatient(Patient patient) {
+        if (!patients.get(patient.getEmergencyLevel()).add(patient))
+            throw new RuntimeException("Patient already registered");
+        return patient;
     }
 
     public void removeFromWaitingList(Patient toCare) {
