@@ -23,10 +23,10 @@ public class AdminClient extends Client {
     }
 
     private enum AdminAction {
-        ADD_DOCTOR("addDoctor", AddDoctorAction::new);
-//        ADD_ROOM("addRoom",AddRoomAction::new),
-//        SET_DOCTOR("setDoctor", SetDoctorAction::new),
-//        CHECK_DOCTOR("checkDoctor", CheckDoctorAction::new);
+        ADD_DOCTOR("addDoctor", AddDoctorAction::new),
+        ADD_ROOM("addRoom",AddRoomAction::new),
+        SET_DOCTOR("setDoctor", SetDoctorAction::new),
+        CHECK_DOCTOR("checkDoctor", CheckDoctorAction::new);
 
         private String actionStr;
         private Supplier<Action> actionSupplier;
