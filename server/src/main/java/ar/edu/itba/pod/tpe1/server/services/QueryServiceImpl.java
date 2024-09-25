@@ -32,8 +32,8 @@ public class QueryServiceImpl implements QueryService {
     }
 
     @Override
-    public Map<Integer, List<Patient>> queryWaitingRoom() {
-        Map<Integer, List<Patient>> waitingPatients = patientRepo.getPatients();
+    public TreeSet<Patient> queryWaitingRoom() {
+        TreeSet<Patient> waitingPatients = patientRepo.getPatients();
 
         if (waitingPatients.isEmpty())
             throw new RuntimeException("No patients are waiting");

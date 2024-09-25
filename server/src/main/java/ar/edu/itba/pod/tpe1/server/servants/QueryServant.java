@@ -57,8 +57,9 @@ public class QueryServant extends QueryServiceGrpc.QueryServiceImplBase {
     public void queryWaitingRoom(QueryServiceOuterClass.QueryWaitingRoomRequest request, StreamObserver<QueryServiceOuterClass.QueryWaitingRoomResponse> responseObserver) {
         QueryServiceOuterClass.QueryWaitingRoomResponse.Builder responseBuilder = QueryServiceOuterClass.QueryWaitingRoomResponse.newBuilder();
         try {
-            Map<Integer, List<Patient>> waitingRoom = queryService.queryWaitingRoom();
-            List<PatientOuterClass.Patient> patients = waitingRoom.values().stream().flatMap(List::stream).map(patient ->
+            TreeSet<Patient> waitingRoom = queryService.queryWaitingRoom();
+            List<PatientOuterClass.Patient> patients = waitingRoom.stream()
+                    .map(patient ->
                     PatientOuterClass.Patient.newBuilder()
                             .setName(patient.getName())
                             .setLevel(patient.getEmergencyLevel())
