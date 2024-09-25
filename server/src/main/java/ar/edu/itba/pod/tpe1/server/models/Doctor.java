@@ -4,7 +4,7 @@ import models.doctor.DoctorOuterClass;
 
 import java.util.Objects;
 
-public class Doctor {
+public class Doctor implements Comparable<Doctor> {
     private String name;
     private Integer level;
     private DoctorOuterClass.DoctorStatus status;
@@ -45,8 +45,9 @@ public class Doctor {
         this.level = level;
     }
 
-    public Boolean canCare() {
-        return this.getStatus() == DoctorOuterClass.DoctorStatus.AVAILABLE;
+    public Boolean canCare(Integer emergencyLevel) {
+        return (this.getStatus() == DoctorOuterClass.DoctorStatus.AVAILABLE) 
+                && (this.getLevel() >= emergencyLevel);
     }
 
     @Override
@@ -68,5 +69,11 @@ public class Doctor {
     public int hashCode() {
         return Objects.hash(this.getName());
     }
-
+    
+    @Override
+    public int compareTo(Doctor other){
+        if(this.getLevel().compareTo(other.getLevel()) != 0)
+            return this.getLevel().compareTo(other.getLevel());
+        return this.getName().compareTo(other.getName());
+    }
 }

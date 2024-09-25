@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 
 import ar.edu.itba.pod.tpe1.server.models.CareHistory;
 import ar.edu.itba.pod.tpe1.server.models.Doctor;
@@ -14,7 +15,7 @@ public class RoomRepository {
     Set<Room> rooms;
 
     public RoomRepository() {
-        rooms = Collections.synchronizedSet(new HashSet<>());
+        rooms = Collections.synchronizedSet(new TreeSet<>());
     }
 
     public Set<Room> getRooms() {

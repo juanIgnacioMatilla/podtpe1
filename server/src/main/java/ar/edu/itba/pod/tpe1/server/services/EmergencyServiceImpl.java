@@ -36,21 +36,25 @@ public class EmergencyServiceImpl implements EmergencyService {
             throw new RuntimeException("Room doesn't exist");
         Room room = maybeRoom.get();
         Patient toCare = null;
-        Map<Integer, List<Patient>> patients = patientRepo.getPatients();
+        TreeSet<Patient> patients = patientRepo.getPatients();
         Set<Doctor> doctors = doctorRepo.getDoctors();
         if (doctors.isEmpty())
             throw new RuntimeException("No doctors registered");
         Doctor toAttend = null;
-        for (int i = 5; i >= 0; i--) {
-            if (patients.get(i).isEmpty())
-                continue;
-            toCare = patients.get(i).getFirst();
+        if (patients.isEmpty())
+            throw new RuntimeException("No patients waiting to be attended");
+        while(toAttend == null){
+            toCare = patients.first();
             for (Doctor doctor : doctors) {
-                if (doctor.canCare()) {
+                if (doctor.canCare(toCare.getEmergencyLevel())) {
                     toAttend = doctor;
                     break;
                 }
             }
+            if(toAttend == null)
+                patients.remove(toCare);
+            //deberiamos aca llamar a getDoctors y getPatients denuevo? 
+            //para ver si se agregaron mas o que
         }
         if (toCare == null)
             throw new RuntimeException("No patients waiting to be cared for");
@@ -66,8 +70,6 @@ public class EmergencyServiceImpl implements EmergencyService {
     // TODO: sacarle las exceptions, este no tiene que fallar.
     public void careAllPatients() {
         Set<Room> rooms = roomRepo.getRooms();
-        Map<Integer, List<Patient>> patients = patientRepo.getPatients();
-        Set<Doctor> doctors = doctorRepo.getDoctors();
         Room aux = null;
         if (rooms.isEmpty())
             throw new RuntimeException("No rooms registered");

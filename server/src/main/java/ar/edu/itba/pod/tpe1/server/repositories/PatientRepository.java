@@ -6,21 +6,18 @@ import java.util.concurrent.ConcurrentHashMap;
 import ar.edu.itba.pod.tpe1.server.models.Patient;
 
 public class PatientRepository {
-    private Map<Integer, List<Patient>> patients;
+    private Set<Patient> patients;
 
     public PatientRepository() {
-        patients = new ConcurrentHashMap<>();
-        for (int i = 1; i <= 5; i++) {
-            patients.put(i, Collections.synchronizedList(new ArrayList<>()));
-        }
+        patients = Collections.synchronizedSet(new TreeSet<>());        
     }
 
-    public Map<Integer, List<Patient>> getPatients() {
-        return patients;
+    public TreeSet<Patient> getPatients() {
+        return new TreeSet<>(patients);
     }
 
     public Patient addPatient(Patient patient) {
-        if (!patients.get(patient.getEmergencyLevel()).add(patient))
+        if (!patients.add(patient))
             throw new RuntimeException("Patient already registered");
         return patient;
     }
@@ -28,12 +25,11 @@ public class PatientRepository {
     public void removeFromWaitingList(Patient toCare) {
         if (toCare == null || toCare.getEmergencyLevel() >= 5 || toCare.getEmergencyLevel() <= 0)
             return;
-        patients.get(toCare.getEmergencyLevel()).remove(toCare);
+        patients.remove(toCare);
     }
 
     public Optional<Patient> getPatient(String name){
-        return patients.values().stream()
-                .flatMap(List::stream)
+        return patients.stream()
                 .filter(patient -> patient.getName().equals(name))
                 .findFirst();
     }

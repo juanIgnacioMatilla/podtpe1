@@ -1,6 +1,6 @@
 package ar.edu.itba.pod.tpe1.server.models;
 
-public class Room {
+public class Room implements Comparable<Room>{
     private final Integer id;
     private Boolean occupied;
     private Doctor doctor;
@@ -42,5 +42,10 @@ public class Room {
 
     public void setOccupied(Boolean occupied) {
         this.occupied = occupied;
+    }
+
+    @Override
+    public int compareTo(Room other){
+        return this.getId().compareTo(other.getId());
     }
 }

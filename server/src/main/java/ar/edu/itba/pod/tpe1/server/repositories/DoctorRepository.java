@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 
 import ar.edu.itba.pod.tpe1.server.models.Doctor;
 import models.doctor.DoctorOuterClass;
@@ -12,7 +13,7 @@ public class DoctorRepository {
     private Set<Doctor> doctors;
 
     public DoctorRepository() {
-        doctors = Collections.synchronizedSet(new HashSet<>());
+        doctors = Collections.synchronizedSet(new TreeSet<>());
     }
 
     // set devuelve false si el doctor ya estaba y no lo agrega.

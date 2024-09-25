@@ -1,14 +1,20 @@
 package ar.edu.itba.pod.tpe1.server.models;
 
+import java.security.Timestamp;
+import java.time.*;
+import java.sql.Time;
+import java.time.Instant;
 import java.util.Objects;
 
-public class Patient {
+public class Patient implements Comparable<Patient> {
     private String name;
     private Integer emergencyLevel;
+    private LocalDateTime timeCreated;
 
     public Patient(String name, Integer emergencyLevel) {
         this.name = name;
         this.emergencyLevel = emergencyLevel;
+        timeCreated = LocalDateTime.now();
     }
 
     public String getName() {
@@ -21,6 +27,10 @@ public class Patient {
 
     public void setEmergencyLevel(Integer emergencyLevel) {
         this.emergencyLevel = emergencyLevel;
+    }
+    
+    public LocalDateTime getTimeCreated() {
+        return timeCreated;
     }
 
     @Override
@@ -41,5 +51,12 @@ public class Patient {
     @Override
     public final int hashCode() {
         return Objects.hash(name);
+    }
+
+    @Override
+    public int compareTo(Patient other){
+        if(this.getEmergencyLevel().compareTo(other.getEmergencyLevel()) != 0)
+            return this.getEmergencyLevel().compareTo(other.getEmergencyLevel());
+        return this.getTimeCreated().compareTo(other.getTimeCreated());
     }
 }
