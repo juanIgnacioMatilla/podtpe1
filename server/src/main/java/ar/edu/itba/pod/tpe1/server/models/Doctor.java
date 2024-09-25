@@ -72,6 +72,10 @@ public class Doctor implements Comparable<Doctor> {
     
     @Override
     public int compareTo(Doctor other){
+        int nameComparison = this.getName().compareTo(other.getName());
+        if (nameComparison == 0) {
+            return 0;
+        }
         if(this.getLevel().compareTo(other.getLevel()) != 0)
             return this.getLevel().compareTo(other.getLevel());
         return this.getName().compareTo(other.getName());
