@@ -16,13 +16,12 @@ public class DoctorRepository {
         doctors = Collections.synchronizedSet(new TreeSet<>());
     }
 
-    // set devuelve false si el doctor ya estaba y no lo agrega.
     public Boolean addDoctor(Doctor doctor) {
         return doctors.add(doctor);
     }
 
-    public Set<Doctor> getDoctors() {
-        return doctors;
+    public TreeSet<Doctor> getDoctors() {
+        return new TreeSet<>(doctors);
     }
 
     public Optional<Doctor> getDoctorByName(String name) {
