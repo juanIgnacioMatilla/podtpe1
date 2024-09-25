@@ -12,12 +12,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Optional;
 
 public class Server {
     private static Logger logger = LoggerFactory.getLogger(Server.class);
 
     public static void main(String[] args) throws InterruptedException, IOException {
         logger.info(" Server Starting ...");
+        int port = Optional.ofNullable(System.getProperty("port")).map(Integer::parseInt).orElse(50051);
 
         DoctorRepository doctorRepository = new DoctorRepository();
         CareHistoryRepository careHistoryRepository = new CareHistoryRepository();
@@ -31,7 +33,6 @@ public class Server {
         QueryService queryService = new QueryServiceImpl(roomRepository,patientRepository,careHistoryRepository);
         WaitingRoomService waitingRoomService = new WaitingRoomServiceImpl(patientRepository);
 
-        int port = 50051;
         io.grpc.Server server = ServerBuilder.forPort(port)
                 .addService(new AdministrationServant(adminService))
                 .addService(new DoctorPagerServant(notificationService,adminService))
