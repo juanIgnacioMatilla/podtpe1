@@ -20,6 +20,11 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
     EmergencyService emergencyService;
     QueryService queryService;
 
+    public EmergencyCareServant(EmergencyService emergencyService, QueryService queryService) {
+        this.emergencyService = emergencyService;
+        this.queryService = queryService;
+    }
+
     @Override
     public void carePatient(EmergencyCareServiceOuterClass.CarePatientRequest request, StreamObserver<EmergencyCareServiceOuterClass.CarePatientResponse> responseObserver) {
         EmergencyCareServiceOuterClass.CarePatientResponse.Builder responseBuilder = EmergencyCareServiceOuterClass.CarePatientResponse.newBuilder();

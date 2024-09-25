@@ -19,6 +19,10 @@ public class QueryServant extends QueryServiceGrpc.QueryServiceImplBase {
 
     QueryService queryService;
 
+    public QueryServant(QueryService queryService) {
+        this.queryService = queryService;
+    }
+
     @Override
     public void queryRooms(Empty request, StreamObserver<QueryServiceOuterClass.QueryRoomsResponse> responseObserver) {
         QueryServiceOuterClass.QueryRoomsResponse.Builder responseBuilder = QueryServiceOuterClass.QueryRoomsResponse.newBuilder();

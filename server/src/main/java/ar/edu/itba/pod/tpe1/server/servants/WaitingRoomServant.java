@@ -11,6 +11,11 @@ import waitingRoomService.WaitingRoomServiceOuterClass;
 public class WaitingRoomServant extends WaitingRoomServiceGrpc.WaitingRoomServiceImplBase {
 
     WaitingRoomService waitingRoomService;
+
+    public WaitingRoomServant(WaitingRoomService waitingRoomService) {
+        this.waitingRoomService = waitingRoomService;
+    }
+
     @Override
     public void addPatient(WaitingRoomServiceOuterClass.AddPatientRequest request, StreamObserver<WaitingRoomServiceOuterClass.AddPatientResponse> responseObserver) {
         WaitingRoomServiceOuterClass.AddPatientResponse.Builder responseBuilder = WaitingRoomServiceOuterClass.AddPatientResponse.newBuilder();
