@@ -68,7 +68,7 @@ public class EmergencyServiceImpl implements EmergencyService {
         return this.occupyRoom(room.getId(), toAttend,toCare);
     }
 
-    public List<Room> careAllPatients() {
+    public void careAllPatients() {
         Set<Room> rooms = roomRepo.getRooms();
         List<Room> out = new ArrayList<>();
         Room aux = null;
@@ -79,7 +79,6 @@ public class EmergencyServiceImpl implements EmergencyService {
                 out.add(aux);
             }
         }
-        return out;
     }
 
     @Override

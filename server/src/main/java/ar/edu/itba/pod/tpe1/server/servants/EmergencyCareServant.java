@@ -2,6 +2,7 @@ package ar.edu.itba.pod.tpe1.server.servants;
 
 import ar.edu.itba.pod.tpe1.server.models.Room;
 import ar.edu.itba.pod.tpe1.server.services.interfaces.EmergencyService;
+import ar.edu.itba.pod.tpe1.server.services.interfaces.QueryService;
 import com.google.protobuf.Empty;
 import emergencyCareService.EmergencyCareServiceGrpc;
 import emergencyCareService.EmergencyCareServiceOuterClass;
@@ -12,10 +13,12 @@ import models.room.RoomOuterClass;
 import queryService.QueryServiceOuterClass;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCareServiceImplBase {
     EmergencyService emergencyService;
+    QueryService queryService;
 
     @Override
     public void carePatient(EmergencyCareServiceOuterClass.CarePatientRequest request, StreamObserver<EmergencyCareServiceOuterClass.CarePatientResponse> responseObserver) {
@@ -50,7 +53,34 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
 
     @Override
     public void careAllPatients(Empty request, StreamObserver<RoomOuterClass.Room> responseObserver) {
-
+        emergencyService.careAllPatients();
+        queryService.queryRooms().forEach(room -> {
+            try {
+                responseObserver.onNext(RoomOuterClass.Room.newBuilder().
+                        setDoctor(
+                                DoctorOuterClass.Doctor.newBuilder()
+                                        .setName(room.getDoctor().getName())
+                                        .setLevel(room.getDoctor().getLevel())
+                                        .setStatus(room.getDoctor().getStatus())
+                                        .build())
+                        .setPatient(
+                                PatientOuterClass.Patient.newBuilder()
+                                        .setName(room.getPatient().getName())
+                                        .setLevel(room.getPatient().getEmergencyLevel())
+                                        .build()
+                        )
+                        .setOccupied(room.getOccupied())
+                        .setRoomNumber(room.getId())
+                        .build());
+            } catch (RuntimeException e) {
+                responseObserver
+                        .onNext(RoomOuterClass.Room.newBuilder()
+                                .setOccupied(room.getOccupied())
+                                .setRoomNumber(room.getId())
+                                .build());
+            }
+        });
+        responseObserver.onCompleted();
     }
 
     @Override
