@@ -1,4 +1,5 @@
-#!/bin/bash
+##!/bin/bash
+#!/usr/bin/env bash
 
 PATH_TO_CODE_BASE=`pwd`
 
