@@ -33,9 +33,6 @@ public class AdministrationServant extends AdministrationServiceGrpc.Administrat
             if (request.getDoctorName().isEmpty()) {
                 throw new IllegalArgumentException("Doctor name is required");
             }
-            if (request.getLevel() == 0) {
-                throw new IllegalArgumentException("Doctor level is required");
-            }
             Doctor doctor = adminService.addDoctor(request.getDoctorName(), request.getLevel());
             responseBuilder.setDoctor(DoctorOuterClass.Doctor.newBuilder()
                     .setLevel(doctor.getLevel())

@@ -11,6 +11,9 @@ public class AdminServiceImpl implements AdminService {
     DoctorRepository doctorRepository;
     RoomRepository roomRepo;
 
+    public static Integer MAX_LEVEL = 5;
+    public static Integer MIN_LEVEL = 1;
+
     public AdminServiceImpl(DoctorRepository doctorRepository, RoomRepository roomRepo) {
         this.doctorRepository = doctorRepository;
         this.roomRepo = roomRepo;
@@ -22,12 +25,12 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public Doctor addDoctor(String name, Integer maxLevel) {
-        if (maxLevel <= 0 || maxLevel >= 9)
-            throw new RuntimeException("maxLevel not permited");
-        Doctor doctor = new Doctor(name, maxLevel);
+    public Doctor addDoctor(String name, Integer level) {
+        if (level <= MIN_LEVEL || level >= MAX_LEVEL)
+            throw new IllegalArgumentException("Level "+level+" is invalid. Must be between "+MIN_LEVEL+" and "+MAX_LEVEL);
+        Doctor doctor = new Doctor(name, level);
         if (!doctorRepository.addDoctor(doctor))
-            throw new RuntimeException("doctor already exists");
+            throw new RuntimeException("Doctor "+name+" already exists");
         return doctor;
     }
 

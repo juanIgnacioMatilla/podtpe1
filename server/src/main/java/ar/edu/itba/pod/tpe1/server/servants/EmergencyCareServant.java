@@ -52,7 +52,7 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
         EmergencyCareServiceOuterClass.CareAllPatientResponse.Builder builder = EmergencyCareServiceOuterClass.CareAllPatientResponse.newBuilder();
         try {
             List<Room> affectedRooms = emergencyService.careAllPatients();
-            Set<Room> rooms = queryService.queryRooms();
+            List<Room> rooms = queryService.queryRooms();
             List<EmergencyCareServiceOuterClass.AuxRoom> auxRooms = new ArrayList<>();
             rooms.forEach(room -> {
                 if (affectedRooms.contains(room)) {
