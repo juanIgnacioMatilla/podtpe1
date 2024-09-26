@@ -64,6 +64,9 @@ public class DoctorRepository {
                 .filter(d -> d.equals(doctor))
                 .findFirst()
                 .map(d -> {
+                    if (d.getPageable())
+                        d.getObserver().onNext(DoctorPagerServiceOuterClass.NotificationResponse.newBuilder()
+                                .setStatus(d.toString() + " status changed to " + status).build());
                     d.setStatus(status);
                     return d;
                 });

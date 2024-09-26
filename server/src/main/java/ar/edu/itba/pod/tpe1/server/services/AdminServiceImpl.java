@@ -1,6 +1,5 @@
 package ar.edu.itba.pod.tpe1.server.services;
 
-
 import ar.edu.itba.pod.tpe1.server.models.Doctor;
 import ar.edu.itba.pod.tpe1.server.repositories.DoctorRepository;
 import ar.edu.itba.pod.tpe1.server.repositories.RoomRepository;
@@ -26,24 +25,28 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public Doctor addDoctor(String name, Integer level) {
-        if (level <= MIN_LEVEL || level >= MAX_LEVEL)
-            throw new IllegalArgumentException("Level "+level+" is invalid. Must be between "+MIN_LEVEL+" and "+MAX_LEVEL);
+        if (level < MIN_LEVEL || level > MAX_LEVEL)
+            throw new IllegalArgumentException(
+                    "Level " + level + " is invalid. Must be between " + MIN_LEVEL + " and " + MAX_LEVEL);
         Doctor doctor = new Doctor(name, level);
         if (!doctorRepository.addDoctor(doctor))
-            throw new RuntimeException("Doctor "+name+" already exists");
+            throw new RuntimeException("Doctor " + name + " already exists");
         return doctor;
     }
 
     @Override
     public Doctor setDoctor(String doctorName, DoctorOuterClass.DoctorStatus status) {
         Doctor doctor = getDoctor(doctorName);
-        //TODO: check wheter or not the doctr it can change his status
-        return doctorRepository.setStatus(doctor,status).orElseThrow();
+        if (doctor.getStatus() == DoctorOuterClass.DoctorStatus.ATTENDING)
+            throw new RuntimeException("Doctor is attending, status can't be affected");
+        // TODO: check wheter or not the doctr it can change his status
+        return doctorRepository.setStatus(doctor, status)
+                .orElseThrow(() -> new RuntimeException("No doctor under that name"));
     }
-
 
     @Override
     public Doctor getDoctor(String name) {
-        return doctorRepository.getDoctorByName(name).orElseThrow();
+        return doctorRepository.getDoctorByName(name)
+                .orElseThrow(() -> new RuntimeException("There is no registered doctor by that name"));
     }
 }

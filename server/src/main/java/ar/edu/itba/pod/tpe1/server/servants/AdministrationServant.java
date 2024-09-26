@@ -19,16 +19,20 @@ public class AdministrationServant extends AdministrationServiceGrpc.Administrat
     }
 
     @Override
-    public void addRoom(Empty request, StreamObserver<AdministrationServiceOuterClass.AddRoomResponse> responseObserver) {
+    public void addRoom(Empty request,
+            StreamObserver<AdministrationServiceOuterClass.AddRoomResponse> responseObserver) {
         int newRoom = adminService.addRoom();
-        AdministrationServiceOuterClass.AddRoomResponse addRoomResponse = AdministrationServiceOuterClass.AddRoomResponse.newBuilder().setRoomNumber(newRoom).build();
+        AdministrationServiceOuterClass.AddRoomResponse addRoomResponse = AdministrationServiceOuterClass.AddRoomResponse
+                .newBuilder().setRoomNumber(newRoom).build();
         responseObserver.onNext(addRoomResponse);
         responseObserver.onCompleted();
     }
 
     @Override
-    public void addDoctor(AdministrationServiceOuterClass.AddDoctorRequest request, StreamObserver<AdministrationServiceOuterClass.AddDoctorResponse> responseObserver) {
-        AdministrationServiceOuterClass.AddDoctorResponse.Builder responseBuilder = AdministrationServiceOuterClass.AddDoctorResponse.newBuilder();
+    public void addDoctor(AdministrationServiceOuterClass.AddDoctorRequest request,
+            StreamObserver<AdministrationServiceOuterClass.AddDoctorResponse> responseObserver) {
+        AdministrationServiceOuterClass.AddDoctorResponse.Builder responseBuilder = AdministrationServiceOuterClass.AddDoctorResponse
+                .newBuilder();
         try {
             if (request.getDoctorName().isEmpty()) {
                 throw new IllegalArgumentException("Doctor name is required");
@@ -47,19 +51,23 @@ public class AdministrationServant extends AdministrationServiceGrpc.Administrat
         } catch (RuntimeException e) {
             responseBuilder
                     .setSuccess(false)
-                    .setErrorMessage( e.getMessage());
+                    .setErrorMessage(e.getMessage());
         }
         responseObserver.onNext(responseBuilder.build());
         responseObserver.onCompleted();
     }
 
     @Override
-    public void setDoctor(AdministrationServiceOuterClass.SetDoctorStatusRequest request, StreamObserver<AdministrationServiceOuterClass.SetDoctorStatusResponse> responseObserver) {
-        AdministrationServiceOuterClass.SetDoctorStatusResponse.Builder responseBuilder = AdministrationServiceOuterClass.SetDoctorStatusResponse.newBuilder();
+    public void setDoctor(AdministrationServiceOuterClass.SetDoctorStatusRequest request,
+            StreamObserver<AdministrationServiceOuterClass.SetDoctorStatusResponse> responseObserver) {
+        AdministrationServiceOuterClass.SetDoctorStatusResponse.Builder responseBuilder = AdministrationServiceOuterClass.SetDoctorStatusResponse
+                .newBuilder();
         try {
             if (request.getDoctorName().isEmpty()) {
                 throw new IllegalArgumentException("Doctor name is required");
             }
+            if (request.getStatus() == DoctorOuterClass.DoctorStatus.ATTENDING)
+                throw new IllegalArgumentException("Can't set status to attending in this way");
             Doctor updatedDoctor = adminService.setDoctor(request.getDoctorName(), request.getStatus());
             responseBuilder.setDoctor(DoctorOuterClass.Doctor.newBuilder()
                     .setLevel(updatedDoctor.getLevel())
@@ -67,10 +75,10 @@ public class AdministrationServant extends AdministrationServiceGrpc.Administrat
                     .setStatus(updatedDoctor.getStatus())
                     .build());
             responseBuilder.setSuccess(true);
-            if (updatedDoctor.getPageable()){
+            if (updatedDoctor.getPageable()) {
                 updatedDoctor.getObserver().onNext(NotificationResponse.newBuilder()
-                      .setChangeStatus(updatedDoctor.toString() + "is now " + updatedDoctor.getStatus().toString())
-                      .build());
+                        .setChangeStatus(updatedDoctor.toString() + "is now " + updatedDoctor.getStatus().toString())
+                        .build());
             }
         } catch (IllegalArgumentException e) {
             responseBuilder
@@ -86,8 +94,10 @@ public class AdministrationServant extends AdministrationServiceGrpc.Administrat
     }
 
     @Override
-    public void checkDoctor(AdministrationServiceOuterClass.CheckDoctorStatusRequest request, StreamObserver<AdministrationServiceOuterClass.CheckDoctorStatusResponse> responseObserver) {
-        AdministrationServiceOuterClass.CheckDoctorStatusResponse.Builder responseBuilder = AdministrationServiceOuterClass.CheckDoctorStatusResponse.newBuilder();
+    public void checkDoctor(AdministrationServiceOuterClass.CheckDoctorStatusRequest request,
+            StreamObserver<AdministrationServiceOuterClass.CheckDoctorStatusResponse> responseObserver) {
+        AdministrationServiceOuterClass.CheckDoctorStatusResponse.Builder responseBuilder = AdministrationServiceOuterClass.CheckDoctorStatusResponse
+                .newBuilder();
         try {
             if (request.getDoctorName().isEmpty()) {
                 throw new IllegalArgumentException("Doctor name is required");

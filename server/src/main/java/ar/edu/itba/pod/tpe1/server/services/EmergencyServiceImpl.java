@@ -23,7 +23,7 @@ public class EmergencyServiceImpl implements EmergencyService {
     private RoomRepository roomRepo;
 
     public EmergencyServiceImpl(PatientRepository patientRepository, DoctorRepository doctorRepository,
-                                CareHistoryRepository careHistoryRepository, RoomRepository roomRepository) {
+            CareHistoryRepository careHistoryRepository, RoomRepository roomRepository) {
         this.doctorRepo = doctorRepository;
         this.patientRepo = patientRepository;
         this.careRepo = careHistoryRepository;
@@ -64,6 +64,11 @@ public class EmergencyServiceImpl implements EmergencyService {
         doctorRepo.setStatus(toAttend, DoctorOuterClass.DoctorStatus.ATTENDING);
         Room outputRoom = this.occupyRoom(room.getId(), toAttend, toCare);
         patientRepo.removeFromWaitingList(toCare);
+        if (toAttend.getPageable())
+            toAttend.getObserver().onNext(DoctorPagerServiceOuterClass.NotificationResponse.newBuilder()
+                    .setAttending(toCare.toString() + " and " + toAttend.toString() + " are now in " + room.toString())
+                    .build());
+
         return outputRoom;
     }
 
@@ -91,6 +96,11 @@ public class EmergencyServiceImpl implements EmergencyService {
                     doctorRepo.setStatus(toAttend, DoctorOuterClass.DoctorStatus.ATTENDING);
                     Room outputRoom = this.occupyRoom(room.getId(), toAttend, toCare);
                     patientRepo.removeFromWaitingList(toCare);
+                    if (toAttend.getPageable())
+                        toAttend.getObserver().onNext(DoctorPagerServiceOuterClass.NotificationResponse.newBuilder()
+                                .setAttending(toCare.toString() + " and " + toAttend.toString() + " are now in "
+                                        + room.toString())
+                                .build());
                     out.add(outputRoom);
                 }
             }
@@ -102,9 +112,10 @@ public class EmergencyServiceImpl implements EmergencyService {
     public Room dischargePatient(Integer roomId, String doctorName, String patientName) {
         Room room = roomRepo.getRooms().stream()
                 .filter(r -> r.getId().equals(roomId))
-                .findFirst().orElseThrow(() -> new IllegalArgumentException("Room with number " + roomId + " not found"));
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Room with number " + roomId + " not found"));
         Doctor doctor = room.getDoctor();
-        Patient patient= room.getPatient();
+        Patient patient = room.getPatient();
         if (!patient.getName().equals(patientName))
             throw new IllegalArgumentException("Patient with name " + patientName + " not in Room #" + roomId);
         if (!doctor.getName().equals(doctorName))
@@ -114,22 +125,29 @@ public class EmergencyServiceImpl implements EmergencyService {
         doctorRepo.setStatus(room.getDoctor(), DoctorOuterClass.DoctorStatus.AVAILABLE);
 
         vacateRoom(roomId);
-        Room outputRoom=new Room(roomId);
+        Room outputRoom = new Room(roomId);
         outputRoom.setPatient(patient);
         outputRoom.setDoctor(doctor);
+        if (doctor.getPageable())
+            doctor.getObserver().onNext(DoctorPagerServiceOuterClass.NotificationResponse.newBuilder()
+                    .setFinishattending(patient.toString() + " has been discharged from " + doctor.toString()
+                            + " and the " + room.toString() + " is now Free")
+                    .build());
         return outputRoom;
     }
 
     private Room occupyRoom(Integer roomId, Doctor doctor, Patient patient) {
-        if(!doctorRepo.getDoctors().contains(doctor))
-            throw new IllegalArgumentException("Doctor "+doctor.getName()+" not found");
-        if(!patientRepo.getPatients().contains(patient))
-            throw new IllegalArgumentException("Patient "+patient.getName()+" not found");
-        return roomRepo.updateRoom(roomId, patient, doctor, true).orElseThrow(()-> new IllegalStateException("Room #"+roomId+" not found"));
-    }
-    private Room vacateRoom(Integer roomId) {
-        return roomRepo.updateRoom(roomId, null, null, false).orElseThrow(()-> new IllegalStateException("Room #"+roomId+" not found"));
+        if (!doctorRepo.getDoctors().contains(doctor))
+            throw new IllegalArgumentException("Doctor " + doctor.getName() + " not found");
+        if (!patientRepo.getPatients().contains(patient))
+            throw new IllegalArgumentException("Patient " + patient.getName() + " not found");
+        return roomRepo.updateRoom(roomId, patient, doctor, true)
+                .orElseThrow(() -> new IllegalStateException("Room #" + roomId + " not found"));
     }
 
+    private Room vacateRoom(Integer roomId) {
+        return roomRepo.updateRoom(roomId, null, null, false)
+                .orElseThrow(() -> new IllegalStateException("Room #" + roomId + " not found"));
+    }
 
 }
