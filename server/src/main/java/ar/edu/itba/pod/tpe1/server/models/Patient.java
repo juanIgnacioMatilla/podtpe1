@@ -55,8 +55,12 @@ public class Patient implements Comparable<Patient> {
 
     @Override
     public int compareTo(Patient other){
-        if(this.getEmergencyLevel().compareTo(other.getEmergencyLevel()) != 0)
-            return this.getEmergencyLevel().compareTo(other.getEmergencyLevel());
+        int nameComparison = other.getName().compareTo(this.getName());
+        if (nameComparison == 0) {
+            return 0;
+        }
+        if(other.getEmergencyLevel().compareTo(this.getEmergencyLevel()) != 0)
+            return other.getEmergencyLevel().compareTo(this.getEmergencyLevel());
         return this.getTimeCreated().compareTo(other.getTimeCreated());
     }
 }
