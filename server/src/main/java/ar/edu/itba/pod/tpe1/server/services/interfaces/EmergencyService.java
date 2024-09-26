@@ -14,7 +14,7 @@ public interface EmergencyService {
 
     Room carePatient(Integer roomId);
 
-    void careAllPatients();
+    List<Room> careAllPatients();
 
     Room dischargePatient(Integer roomId, String doctorName, String patientName);
 

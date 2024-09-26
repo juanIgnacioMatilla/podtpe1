@@ -2,6 +2,9 @@ package ar.edu.itba.pod.tpe1.client.admin;
 
 import ar.edu.itba.pod.tpe1.client.Action;
 import ar.edu.itba.pod.tpe1.client.Client;
+import ar.edu.itba.pod.tpe1.client.admin.actions.AddDoctorAction;
+import ar.edu.itba.pod.tpe1.client.admin.actions.AddRoomAction;
+import ar.edu.itba.pod.tpe1.client.admin.actions.CheckDoctorAction;
 
 import java.util.function.Supplier;
 
@@ -24,7 +27,7 @@ public class AdminClient extends Client {
 
     private enum AdminAction {
         ADD_DOCTOR("addDoctor", AddDoctorAction::new),
-        ADD_ROOM("addRoom",AddRoomAction::new),
+        ADD_ROOM("addRoom", AddRoomAction::new),
         SET_DOCTOR("setDoctor", SetDoctorAction::new),
         CHECK_DOCTOR("checkDoctor", CheckDoctorAction::new);
 

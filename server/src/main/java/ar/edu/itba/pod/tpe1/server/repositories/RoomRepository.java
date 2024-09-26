@@ -33,10 +33,6 @@ public class RoomRepository {
                 .filter(r -> r.getId().equals(roomId))
                 .findFirst()
                 .map(r -> {
-                    if(r.getOccupied()) {
-                        if(!r.getDoctor().equals(doctor))
-                            throw new RuntimeException("Doctor was not attending emergency in that room");
-                    }
                     r.setDoctor(doctor);
                     r.setPatient(patient);
                     r.setOccupied(occupied);

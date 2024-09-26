@@ -51,7 +51,7 @@ public class QueryServant extends QueryServiceGrpc.QueryServiceImplBase {
         } catch (RuntimeException e) {
             responseBuilder
                     .setSuccess(false)
-                    .setErrorMessage("Server error: " + e.getMessage());
+                    .setErrorMessage(e.getMessage());
         }
         responseObserver.onNext(responseBuilder.build());
         responseObserver.onCompleted();
@@ -74,7 +74,7 @@ public class QueryServant extends QueryServiceGrpc.QueryServiceImplBase {
         } catch (RuntimeException e) {
             responseBuilder
                     .setSuccess(false)
-                    .setErrorMessage("Server error: " + e.getMessage());
+                    .setErrorMessage(e.getMessage());
         }
         responseObserver.onNext(responseBuilder.build());
         responseObserver.onCompleted();
@@ -112,7 +112,7 @@ public class QueryServant extends QueryServiceGrpc.QueryServiceImplBase {
         } catch (RuntimeException e) {
             responseBuilder
                     .setSuccess(false)
-                    .setErrorMessage("Server error: " + e.getMessage());
+                    .setErrorMessage(e.getMessage());
         }
         responseObserver.onNext(responseBuilder.build());
         responseObserver.onCompleted();

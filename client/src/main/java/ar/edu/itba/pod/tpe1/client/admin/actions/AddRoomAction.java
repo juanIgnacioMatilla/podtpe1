@@ -1,4 +1,4 @@
-package ar.edu.itba.pod.tpe1.client.admin;
+package ar.edu.itba.pod.tpe1.client.admin.actions;
 
 import administrationService.AdministrationServiceGrpc;
 import administrationService.AdministrationServiceOuterClass;

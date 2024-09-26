@@ -39,7 +39,7 @@ public class DoctorPagerServant extends DoctorPagerServiceGrpc.DoctorPagerServic
         } catch (RuntimeException e) {
             responseBuilder
                     .setSuccess(false)
-                    .setErrorMessage("Server error: " + e.getMessage());
+                    .setErrorMessage(e.getMessage());
         }
         responseObserver.onNext(responseBuilder.build());
         responseObserver.onCompleted();
@@ -67,7 +67,7 @@ public class DoctorPagerServant extends DoctorPagerServiceGrpc.DoctorPagerServic
         } catch (RuntimeException e) {
             responseBuilder
                     .setSuccess(false)
-                    .setErrorMessage("Server error: " + e.getMessage());
+                    .setErrorMessage(e.getMessage());
         }
         responseObserver.onNext(responseBuilder.build());
         responseObserver.onCompleted();

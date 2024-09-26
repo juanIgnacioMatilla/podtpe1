@@ -9,7 +9,7 @@ import "models/doctor.proto";
 service EmergencyCareService {
   rpc CarePatient(CarePatientRequest) returns (CarePatientResponse);
 
-  rpc CareAllPatients(google.protobuf.Empty) returns (stream models.room.Room);
+  rpc CareAllPatients(google.protobuf.Empty) returns (CareAllPatientResponse);
 
   rpc DischargePatient(DischargePatientRequest) returns (DischargePatientResponse);
 }
@@ -24,6 +24,16 @@ message CarePatientResponse {
   optional models.room.Room room = 3;
 }
 
+message CareAllPatientResponse{
+  bool success = 1;
+  optional string errorMessage = 2;
+  repeated AuxRoom room = 3;
+}
+
+message AuxRoom {
+  models.room.Room room = 1;
+  bool affected = 2;
+}
 
 message DischargePatientRequest {
   int32 roomNumber = 1;

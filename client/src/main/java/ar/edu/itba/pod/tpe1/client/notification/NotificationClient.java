@@ -2,6 +2,8 @@ package ar.edu.itba.pod.tpe1.client.notification;
 
 import ar.edu.itba.pod.tpe1.client.Action;
 import ar.edu.itba.pod.tpe1.client.Client;
+import ar.edu.itba.pod.tpe1.client.notification.actions.RegisterAction;
+import ar.edu.itba.pod.tpe1.client.notification.actions.UnRegisterAction;
 
 import java.util.function.Supplier;
 

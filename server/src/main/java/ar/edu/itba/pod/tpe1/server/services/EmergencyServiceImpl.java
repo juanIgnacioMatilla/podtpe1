@@ -23,7 +23,7 @@ public class EmergencyServiceImpl implements EmergencyService {
     private RoomRepository roomRepo;
 
     public EmergencyServiceImpl(PatientRepository patientRepository, DoctorRepository doctorRepository,
-            CareHistoryRepository careHistoryRepository, RoomRepository roomRepository) {
+                                CareHistoryRepository careHistoryRepository, RoomRepository roomRepository) {
         this.doctorRepo = doctorRepository;
         this.patientRepo = patientRepository;
         this.careRepo = careHistoryRepository;
@@ -33,10 +33,10 @@ public class EmergencyServiceImpl implements EmergencyService {
     public Room carePatient(Integer roomId) {
         Set<Room> rooms = roomRepo.getRooms();
         Optional<Room> maybeRoom = rooms.stream().filter(r -> r.getId() == roomId).findFirst();
-        if(maybeRoom.isEmpty())
+        if (maybeRoom.isEmpty())
             throw new RuntimeException("Room doesn't exist");
         Room room = maybeRoom.get();
-        if(room.getOccupied())
+        if (room.getOccupied())
             throw new RuntimeException("Room is occupied");
         Patient toCare = null;
         TreeSet<Patient> patients = patientRepo.getPatients();
@@ -46,7 +46,7 @@ public class EmergencyServiceImpl implements EmergencyService {
         Doctor toAttend = null;
         if (patients.isEmpty())
             throw new RuntimeException("No patients waiting to be attended");
-        while(toAttend == null && !patients.isEmpty()){
+        while (toAttend == null && !patients.isEmpty()) {
             toCare = patients.first();
             for (Doctor doctor : doctors) {
                 if (doctor.canCare(toCare.getEmergencyLevel())) {
@@ -54,44 +54,81 @@ public class EmergencyServiceImpl implements EmergencyService {
                     break;
                 }
             }
-            if(toAttend == null)
+            if (toAttend == null)
                 patients.remove(toCare);
         }
         if (toCare == null)
             throw new RuntimeException("No patients waiting to be cared for");
         if (toAttend == null)
             throw new RuntimeException("No available doctors to attend the patient");
-        CareHistory appointment = new CareHistory(toAttend, toCare, room.getId());
         doctorRepo.setStatus(toAttend, DoctorOuterClass.DoctorStatus.ATTENDING);
-        this.occupyRoom(room.getId(), toAttend,toCare);
+        Room outputRoom = this.occupyRoom(room.getId(), toAttend, toCare);
         patientRepo.removeFromWaitingList(toCare);
-        return this.occupyRoom(room.getId(), toAttend,toCare);
+        return outputRoom;
     }
 
-    public void careAllPatients() {
+    public List<Room> careAllPatients() {
         Set<Room> rooms = roomRepo.getRooms();
         List<Room> out = new ArrayList<>();
-        Room aux = null;
-        
+        TreeSet<Patient> patients = patientRepo.getPatients();
+        TreeSet<Doctor> doctors = doctorRepo.getDoctors();
         for (Room room : rooms) {
-            if(!room.getOccupied()){
-                aux = carePatient(room.getId());
-                out.add(aux);
+            if (!room.getOccupied()) {
+                Patient toCare = null;
+                Doctor toAttend = null;
+                while (toAttend == null && !patients.isEmpty()) {
+                    toCare = patients.first();
+                    for (Doctor doctor : doctors) {
+                        if (doctor.canCare(toCare.getEmergencyLevel())) {
+                            toAttend = doctor;
+                            break;
+                        }
+                    }
+                    if (toAttend == null)
+                        patients.remove(toCare);
+                }
+                if (toCare != null && toAttend != null) {
+                    doctorRepo.setStatus(toAttend, DoctorOuterClass.DoctorStatus.ATTENDING);
+                    Room outputRoom = this.occupyRoom(room.getId(), toAttend, toCare);
+                    patientRepo.removeFromWaitingList(toCare);
+                    out.add(outputRoom);
+                }
             }
         }
+        return out;
     }
 
     @Override
     public Room dischargePatient(Integer roomId, String doctorName, String patientName) {
-        Doctor doctor = doctorRepo.getDoctors().stream()
-                .filter(d -> d.getName().equals(doctorName))
-                .findFirst().orElseThrow();
-        Room room = roomRepo.updateRoom(roomId,null,null,false).orElseThrow();
-        return room;
+        Room room = roomRepo.getRooms().stream()
+                .filter(r -> r.getId().equals(roomId))
+                .findFirst().orElseThrow(() -> new IllegalArgumentException("Room with number " + roomId + " not found"));
+        Doctor doctor = room.getDoctor();
+        Patient patient= room.getPatient();
+        if (!patient.getName().equals(patientName))
+            throw new IllegalArgumentException("Patient with name " + patientName + " not in Room #" + roomId);
+        if (!doctor.getName().equals(doctorName))
+            throw new IllegalArgumentException("Doctor with name " + doctorName + " not in Room #" + roomId);
+
+        careRepo.addToHistory(new CareHistory(room.getDoctor(), room.getPatient(), roomId));
+        doctorRepo.setStatus(room.getDoctor(), DoctorOuterClass.DoctorStatus.AVAILABLE);
+
+        vacateRoom(roomId);
+        Room outputRoom=new Room(roomId);
+        outputRoom.setPatient(patient);
+        outputRoom.setDoctor(doctor);
+        return outputRoom;
     }
 
-    private Room occupyRoom(Integer roomId,Doctor doctor, Patient patient){
-        return roomRepo.updateRoom(roomId,patient,doctor,true).orElseThrow();
+    private Room occupyRoom(Integer roomId, Doctor doctor, Patient patient) {
+        if(!doctorRepo.getDoctors().contains(doctor))
+            throw new IllegalArgumentException("Doctor "+doctor.getName()+" not found");
+        if(!patientRepo.getPatients().contains(patient))
+            throw new IllegalArgumentException("Patient "+patient.getName()+" not found");
+        return roomRepo.updateRoom(roomId, patient, doctor, true).orElseThrow(()-> new IllegalStateException("Room #"+roomId+" not found"));
+    }
+    private Room vacateRoom(Integer roomId) {
+        return roomRepo.updateRoom(roomId, null, null, false).orElseThrow(()-> new IllegalStateException("Room #"+roomId+" not found"));
     }
 
 
