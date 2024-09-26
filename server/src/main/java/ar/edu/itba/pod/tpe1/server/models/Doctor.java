@@ -4,17 +4,22 @@ import models.doctor.DoctorOuterClass;
 
 import java.util.Objects;
 
+import doctorPagerService.DoctorPagerServiceOuterClass;
+import io.grpc.stub.StreamObserver;
+
 public class Doctor implements Comparable<Doctor> {
     private String name;
     private Integer level;
     private DoctorOuterClass.DoctorStatus status;
     private Boolean pageable;
+    private StreamObserver<DoctorPagerServiceOuterClass.NotificationResponse> observer;
 
     public Doctor(String name, Integer level) {
         this.name = name;
         this.level = level;
         this.status = DoctorOuterClass.DoctorStatus.UNAVAILABLE;
         this.pageable = false;
+        this.observer = null;
     }
 
     public String getName() {
@@ -45,8 +50,16 @@ public class Doctor implements Comparable<Doctor> {
         this.level = level;
     }
 
+    public StreamObserver<DoctorPagerServiceOuterClass.NotificationResponse> getObserver() {
+        return observer;
+    }
+
+    public void setObserver(StreamObserver<DoctorPagerServiceOuterClass.NotificationResponse> observer) {
+        this.observer = observer;
+    }
+
     public Boolean canCare(Integer emergencyLevel) {
-        return (this.getStatus() == DoctorOuterClass.DoctorStatus.AVAILABLE) 
+        return (this.getStatus() == DoctorOuterClass.DoctorStatus.AVAILABLE)
                 && (this.getLevel() >= emergencyLevel);
     }
 
@@ -69,14 +82,14 @@ public class Doctor implements Comparable<Doctor> {
     public int hashCode() {
         return Objects.hash(this.getName());
     }
-    
+
     @Override
-    public int compareTo(Doctor other){
+    public int compareTo(Doctor other) {
         int nameComparison = this.getName().compareTo(other.getName());
         if (nameComparison == 0) {
             return 0;
         }
-        if(this.getLevel().compareTo(other.getLevel()) != 0)
+        if (this.getLevel().compareTo(other.getLevel()) != 0)
             return this.getLevel().compareTo(other.getLevel());
         return this.getName().compareTo(other.getName());
     }

@@ -29,21 +29,22 @@ public class QueryRoomsAction extends Action {
         String path = this.arguments.get(PATH);
         QueryRoomsResponse response = blockingStub.queryRooms(Empty.newBuilder().build());
         System.out.println(response.getRoomsList());
-        if(response.getSuccess()){
-        try(PrintWriter out = new PrintWriter(new FileWriter(path))){
-            out.println("Room,Patient,Doctor");
-            for(Room r : response.getRoomsList()){
-                if(r.getOccupied()){
-                    out.println(r.getRoomNumber()+","+r.getPatient().getName()+" (" + r.getPatient().getLevel()+")"
-                    +","+r.getDoctor().getName() + " (" + r.getDoctor().getLevel()+")" );
-                }else{
-                    out.println(r.getRoomNumber()+","+",");
+        if (response.getSuccess()) {
+            try (PrintWriter out = new PrintWriter(new FileWriter(path))) {
+                out.println("Room,Status,Patient,Doctor");
+                for (Room r : response.getRoomsList()) {
+                    if (r.getOccupied()) {
+                        out.println(r.getRoomNumber() + "," + r.getOccupied() + "," + r.getPatient().getName() + " ("
+                                + r.getPatient().getLevel() + ")"
+                                + "," + r.getDoctor().getName() + " (" + r.getDoctor().getLevel() + ")");
+                    } else {
+                        out.println(r.getRoomNumber() + ",Free," + ",");
+                    }
                 }
+            } catch (Exception e) {
+                // logger.error(e.getMessage());
             }
-        }catch(Exception e){
-            //logger.error(e.getMessage());
-        }
-        }else{
+        } else {
             System.out.println(response.getErrorMessage());
         }
 
