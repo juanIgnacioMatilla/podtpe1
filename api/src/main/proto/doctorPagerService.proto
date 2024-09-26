@@ -12,6 +12,8 @@ message RegisterDoctorRequest {
 }
 
 message NotificationResponse{
+  bool success = 6;
+  optional string errorMessage = 7;
   oneof notification{
     string changeStatus = 1;
     string attending = 2;

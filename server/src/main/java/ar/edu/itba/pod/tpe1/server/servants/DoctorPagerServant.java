@@ -22,11 +22,27 @@ public class DoctorPagerServant extends DoctorPagerServiceGrpc.DoctorPagerServic
             StreamObserver<DoctorPagerServiceOuterClass.NotificationResponse> responseObserver) {
         DoctorPagerServiceOuterClass.NotificationResponse.Builder responseBuilder = DoctorPagerServiceOuterClass.NotificationResponse
                 .newBuilder();
-        if (request.getDoctorName().isEmpty()) {
-            throw new IllegalArgumentException("Doctor name is required");
+        try {
+            if (request.getDoctorName().isEmpty()) {
+                throw new IllegalArgumentException("Doctor name is required");
+            }
+            Doctor doctor = adminService.getDoctor(request.getDoctorName());
+            notificationService.register(doctor, responseObserver);
+            responseBuilder.setSuccess(true);
+        } catch (IllegalArgumentException e) {
+            responseBuilder
+                    .setSuccess(false)
+                    .setErrorMessage("Invalid request: " + e.getMessage());
+            responseObserver.onNext(responseBuilder.build());
+            responseObserver.onCompleted();
+        } catch (RuntimeException e) {
+            responseBuilder
+                    .setSuccess(false)
+                    .setErrorMessage(e.getMessage());
+            responseObserver.onNext(responseBuilder.build());
+            responseObserver.onCompleted();
         }
-        Doctor doctor = adminService.getDoctor(request.getDoctorName());
-        notificationService.register(doctor, responseObserver);
+
     }
 
     @Override
@@ -53,7 +69,7 @@ public class DoctorPagerServant extends DoctorPagerServiceGrpc.DoctorPagerServic
         } catch (RuntimeException e) {
             responseBuilder
                     .setSuccess(false)
-                    .setErrorMessage("Server error: " + e.getMessage());
+                    .setErrorMessage(e.getMessage());
         }
         responseObserver.onNext(responseBuilder.build());
         responseObserver.onCompleted();

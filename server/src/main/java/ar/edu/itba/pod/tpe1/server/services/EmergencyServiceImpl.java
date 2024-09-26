@@ -33,10 +33,10 @@ public class EmergencyServiceImpl implements EmergencyService {
     public Room carePatient(Integer roomId) {
         Set<Room> rooms = roomRepo.getRooms();
         Optional<Room> maybeRoom = rooms.stream().filter(r -> r.getId() == roomId).findFirst();
-        if(maybeRoom.isEmpty())
+        if (maybeRoom.isEmpty())
             throw new RuntimeException("Room doesn't exist");
         Room room = maybeRoom.get();
-        if(room.getOccupied())
+        if (room.getOccupied())
             throw new RuntimeException("Room is occupied");
         Patient toCare = null;
         TreeSet<Patient> patients = patientRepo.getPatients();
@@ -46,7 +46,7 @@ public class EmergencyServiceImpl implements EmergencyService {
         Doctor toAttend = null;
         if (patients.isEmpty())
             throw new RuntimeException("No patients waiting to be attended");
-        while(toAttend == null && !patients.isEmpty()){
+        while (toAttend == null && !patients.isEmpty()) {
             toCare = patients.first();
             for (Doctor doctor : doctors) {
                 if (doctor.canCare(toCare.getEmergencyLevel())) {
@@ -54,7 +54,7 @@ public class EmergencyServiceImpl implements EmergencyService {
                     break;
                 }
             }
-            if(toAttend == null)
+            if (toAttend == null)
                 patients.remove(toCare);
         }
         if (toCare == null)
@@ -63,18 +63,18 @@ public class EmergencyServiceImpl implements EmergencyService {
             throw new RuntimeException("No available doctors to attend the patient");
         CareHistory appointment = new CareHistory(toAttend, toCare, room.getId());
         doctorRepo.setStatus(toAttend, DoctorOuterClass.DoctorStatus.ATTENDING);
-        this.occupyRoom(room.getId(), toAttend,toCare);
+        this.occupyRoom(room.getId(), toAttend, toCare);
         patientRepo.removeFromWaitingList(toCare);
-        return this.occupyRoom(room.getId(), toAttend,toCare);
+        return this.occupyRoom(room.getId(), toAttend, toCare);
     }
 
     public void careAllPatients() {
         Set<Room> rooms = roomRepo.getRooms();
         List<Room> out = new ArrayList<>();
         Room aux = null;
-        
+
         for (Room room : rooms) {
-            if(!room.getOccupied()){
+            if (!room.getOccupied()) {
                 aux = carePatient(room.getId());
                 out.add(aux);
             }
@@ -86,13 +86,12 @@ public class EmergencyServiceImpl implements EmergencyService {
         Doctor doctor = doctorRepo.getDoctors().stream()
                 .filter(d -> d.getName().equals(doctorName))
                 .findFirst().orElseThrow();
-        Room room = roomRepo.updateRoom(roomId,null,null,false).orElseThrow();
+        Room room = roomRepo.updateRoom(roomId, null, null, false).orElseThrow();
         return room;
     }
 
-    private Room occupyRoom(Integer roomId,Doctor doctor, Patient patient){
-        return roomRepo.updateRoom(roomId,patient,doctor,true).orElseThrow();
+    private Room occupyRoom(Integer roomId, Doctor doctor, Patient patient) {
+        return roomRepo.updateRoom(roomId, patient, doctor, true).orElseThrow();
     }
-
 
 }
