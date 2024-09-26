@@ -8,7 +8,7 @@ import "models/doctor.proto";
 import "models/careHistory.proto";
 service QueryService {
   rpc QueryRooms (google.protobuf.Empty) returns (QueryRoomsResponse);
-  rpc QueryWaitingRoom (QueryWaitingRoomRequest) returns (QueryWaitingRoomResponse);
+  rpc QueryWaitingRoom (google.protobuf.Empty) returns (QueryWaitingRoomResponse);
   rpc QueryCares (QueryCaresRequest) returns (QueryCaresResponse);
 }
 
@@ -18,10 +18,6 @@ message QueryRoomsResponse {
   repeated models.room.Room rooms = 3;
 }
 
-
-message QueryWaitingRoomRequest {
-  int32 roomNumber = 1;
-}
 
 message QueryWaitingRoomResponse {
   bool success = 1;

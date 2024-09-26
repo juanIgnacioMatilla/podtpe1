@@ -16,10 +16,10 @@ import ar.edu.itba.pod.tpe1.server.models.CareHistory;
  */
 public interface QueryService {
 
-    Set<Room> queryRooms();/* Nodev */
+    List<Room> queryRooms();/* Nodev */
 
-    TreeSet<Patient> queryWaitingRoom();
+    List<Patient> queryWaitingRoom();
 
-    Queue<CareHistory> queryCares(Integer room);
+    List<CareHistory> queryCares(Integer room);
 
 }
