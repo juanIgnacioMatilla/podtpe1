@@ -5,6 +5,7 @@ import administrationService.AdministrationServiceOuterClass;
 import ar.edu.itba.pod.tpe1.server.models.Doctor;
 import ar.edu.itba.pod.tpe1.server.services.AdminServiceImpl;
 import ar.edu.itba.pod.tpe1.server.services.interfaces.AdminService;
+import doctorPagerService.DoctorPagerServiceOuterClass.NotificationResponse;
 import com.google.protobuf.Empty;
 import io.grpc.stub.StreamObserver;
 import models.doctor.DoctorOuterClass;
@@ -69,6 +70,11 @@ public class AdministrationServant extends AdministrationServiceGrpc.Administrat
                     .setStatus(updatedDoctor.getStatus())
                     .build());
             responseBuilder.setSuccess(true);
+            if (updatedDoctor.getPageable()){
+                updatedDoctor.getObserver().onNext(NotificationResponse.newBuilder()
+                      .setChangeStatus(updatedDoctor.toString() + "is now " + updatedDoctor.getStatus().toString())
+                      .build());
+            }
         } catch (IllegalArgumentException e) {
             responseBuilder
                     .setSuccess(false)

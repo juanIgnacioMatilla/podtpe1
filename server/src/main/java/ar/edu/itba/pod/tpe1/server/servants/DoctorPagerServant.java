@@ -18,36 +18,38 @@ public class DoctorPagerServant extends DoctorPagerServiceGrpc.DoctorPagerServic
     }
 
     @Override
-    public void registerDoctor(DoctorPagerServiceOuterClass.RegisterDoctorRequest request, StreamObserver<DoctorPagerServiceOuterClass.RegisterDoctorResponse> responseObserver) {
-        DoctorPagerServiceOuterClass.RegisterDoctorResponse.Builder responseBuilder = DoctorPagerServiceOuterClass.RegisterDoctorResponse.newBuilder();
+    public void registerDoctor(DoctorPagerServiceOuterClass.RegisterDoctorRequest request,
+            StreamObserver<DoctorPagerServiceOuterClass.NotificationResponse> responseObserver) {
+        DoctorPagerServiceOuterClass.NotificationResponse.Builder responseBuilder = DoctorPagerServiceOuterClass.NotificationResponse
+                .newBuilder();
         try {
             if (request.getDoctorName().isEmpty()) {
                 throw new IllegalArgumentException("Doctor name is required");
             }
             Doctor doctor = adminService.getDoctor(request.getDoctorName());
-            notificationService.register(doctor);
-            responseBuilder.setDoctor(DoctorOuterClass.Doctor.newBuilder()
-                    .setLevel(doctor.getLevel())
-                    .setName(doctor.getName())
-                    .setStatus(doctor.getStatus())
-                    .build());
+            notificationService.register(doctor, responseObserver);
             responseBuilder.setSuccess(true);
         } catch (IllegalArgumentException e) {
             responseBuilder
                     .setSuccess(false)
                     .setErrorMessage("Invalid request: " + e.getMessage());
+            responseObserver.onNext(responseBuilder.build());
+            responseObserver.onCompleted();
         } catch (RuntimeException e) {
             responseBuilder
                     .setSuccess(false)
                     .setErrorMessage(e.getMessage());
+            responseObserver.onNext(responseBuilder.build());
+            responseObserver.onCompleted();
         }
-        responseObserver.onNext(responseBuilder.build());
-        responseObserver.onCompleted();
+
     }
 
     @Override
-    public void unregisterDoctor(DoctorPagerServiceOuterClass.UnregisterDoctorRequest request, StreamObserver<DoctorPagerServiceOuterClass.UnregisterDoctorResponse> responseObserver) {
-        DoctorPagerServiceOuterClass.UnregisterDoctorResponse.Builder responseBuilder = DoctorPagerServiceOuterClass.UnregisterDoctorResponse.newBuilder();
+    public void unregisterDoctor(DoctorPagerServiceOuterClass.UnregisterDoctorRequest request,
+            StreamObserver<DoctorPagerServiceOuterClass.UnregisterDoctorResponse> responseObserver) {
+        DoctorPagerServiceOuterClass.UnregisterDoctorResponse.Builder responseBuilder = DoctorPagerServiceOuterClass.UnregisterDoctorResponse
+                .newBuilder();
         try {
             if (request.getDoctorName().isEmpty()) {
                 throw new IllegalArgumentException("Doctor name is required");

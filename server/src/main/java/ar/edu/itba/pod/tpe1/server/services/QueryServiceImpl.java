@@ -24,31 +24,31 @@ public class QueryServiceImpl implements QueryService {
     }
 
     @Override
-    public Set<Room> queryRooms() {
+    public List<Room> queryRooms() {
         Set<Room> rooms = roomRepo.getRooms();
         if (rooms.isEmpty())
             throw new RuntimeException("No rooms have been added");
-        return rooms;
+        return new ArrayList<>(rooms);
     }
 
     @Override
-    public TreeSet<Patient> queryWaitingRoom() {
+    public List<Patient> queryWaitingRoom() {
         TreeSet<Patient> waitingPatients = patientRepo.getPatients();
 
         if (waitingPatients.isEmpty())
             throw new RuntimeException("No patients are waiting");
-        return waitingPatients;
+        return new ArrayList<>(waitingPatients);
     }
 
     @Override
-    public Queue<CareHistory> queryCares(Integer room) {
+    public List<CareHistory> queryCares(Integer room) {
         Queue<CareHistory> out = careHistoryRepo.getHistory();
         if (room != null) {
             out.removeIf(careHistory -> !Objects.equals(careHistory.getRoomId(), room));
         }
         if (out.isEmpty())
             throw new RuntimeException("No patients have been care yet");
-        return out;
+        return new ArrayList<>(out);
     }
 
 }

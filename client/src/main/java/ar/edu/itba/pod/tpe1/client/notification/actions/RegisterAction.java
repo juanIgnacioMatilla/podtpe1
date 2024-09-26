@@ -1,15 +1,17 @@
 package ar.edu.itba.pod.tpe1.client.notification.actions;
 
-import administrationService.AdministrationServiceGrpc;
-import administrationService.AdministrationServiceOuterClass;
 import ar.edu.itba.pod.tpe1.client.Action;
 import doctorPagerService.DoctorPagerServiceGrpc;
 import doctorPagerService.DoctorPagerServiceOuterClass.RegisterDoctorRequest;
-import doctorPagerService.DoctorPagerServiceOuterClass.RegisterDoctorResponse;
+import doctorPagerService.DoctorPagerServiceOuterClass.NotificationResponse;
 import io.grpc.ManagedChannel;
+import io.grpc.stub.StreamObserver;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+
+import com.google.common.util.concurrent.ListenableFutureTask;
 
 public class RegisterAction extends Action {
 
@@ -21,16 +23,66 @@ public class RegisterAction extends Action {
 
     @Override
     public void run(ManagedChannel managedChannel) {
-        DoctorPagerServiceGrpc.DoctorPagerServiceBlockingStub blockingStub = DoctorPagerServiceGrpc.newBlockingStub(managedChannel);
+        DoctorPagerServiceGrpc.DoctorPagerServiceStub asyncStub = DoctorPagerServiceGrpc.newStub(managedChannel);
+
         String doctorName = this.arguments.get(DOCTOR_NAME);
+
         RegisterDoctorRequest registerDoctorRequest = RegisterDoctorRequest.newBuilder()
                 .setDoctorName(doctorName)
                 .build();
-        RegisterDoctorResponse response = blockingStub.registerDoctor(registerDoctorRequest);
-        if(response.getSuccess()){
-            System.out.println("Doctor "+response.getDoctor().getName()+" ("+response.getDoctor().getLevel()+") registered succesfully for pager");
-        }else{
-            System.out.println(response.getErrorMessage());
+
+        CountDownLatch latch = new CountDownLatch(1);
+
+        StreamObserver<NotificationResponse> notificationObserver = new StreamObserver<NotificationResponse>() {
+
+            @Override
+            public void onNext(NotificationResponse registerDoctorResponse) {
+                String output = getMessage(registerDoctorResponse.getNotificationCase().getNumber(),
+                        registerDoctorResponse);
+                System.out.println(output);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                System.err.println("Error in receiving notifications: " +
+                        throwable.getMessage());
+                latch.countDown();
+            }
+
+            @Override
+            public void onCompleted() {
+                latch.countDown();
+            }
+
+            public String getMessage(int number, NotificationResponse response) {
+                switch (number) {
+                    case 1:
+                        return response.getChangeStatus();
+                    case 2:
+                        return response.getAttending();
+                    case 3:
+                        return response.getFinishAttending();
+                    case 4:
+                        return response.getRegister();
+                    case 5:
+                        return response.getUnregister();
+                    default:
+                        break;
+                }
+                System.out.println("error message");
+                latch.countDown();
+                return "";
+            }
+        };
+
+        asyncStub.registerDoctor(registerDoctorRequest, notificationObserver);
+
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            System.err.println("Thread was interrupted: " + e.getMessage());
         }
+
     }
 }

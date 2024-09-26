@@ -3,7 +3,7 @@ syntax = "proto3";
 package doctorPagerService;
 import "models/doctor.proto";
 service DoctorPagerService {
-  rpc RegisterDoctor (RegisterDoctorRequest) returns (RegisterDoctorResponse);
+  rpc RegisterDoctor (RegisterDoctorRequest) returns ( stream NotificationResponse);
   rpc UnregisterDoctor (UnregisterDoctorRequest) returns (UnregisterDoctorResponse);
 }
 
@@ -11,10 +11,16 @@ message RegisterDoctorRequest {
   string doctorName = 1;
 }
 
-message RegisterDoctorResponse {
-  bool success = 1;
-  optional string errorMessage = 2;
-  optional models.doctor.Doctor doctor = 3;
+message NotificationResponse{
+  bool success = 6;
+  optional string errorMessage = 7;
+  oneof notification{
+    string changeStatus = 1;
+    string attending = 2;
+    string finishAttending = 3;
+    string register = 4;
+    string unregister = 5;
+  }
 }
 
 message UnregisterDoctorRequest {
