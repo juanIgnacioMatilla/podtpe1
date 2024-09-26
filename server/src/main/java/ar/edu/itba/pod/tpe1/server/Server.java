@@ -31,7 +31,7 @@ public class Server {
         EmergencyService emergencyService = new EmergencyServiceImpl(patientRepository,doctorRepository,careHistoryRepository,roomRepository);
         NotificationService notificationService = new NotificationServiceImpl(doctorRepository);
         QueryService queryService = new QueryServiceImpl(roomRepository,patientRepository,careHistoryRepository);
-        WaitingRoomService waitingRoomService = new WaitingRoomServiceImpl(patientRepository);
+        WaitingRoomService waitingRoomService = new WaitingRoomServiceImpl(patientRepository,careHistoryRepository,roomRepository);
 
         io.grpc.Server server = ServerBuilder.forPort(port)
                 .addService(new AdministrationServant(adminService))

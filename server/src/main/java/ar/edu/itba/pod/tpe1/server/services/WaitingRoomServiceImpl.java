@@ -32,7 +32,12 @@ public class WaitingRoomServiceImpl implements WaitingRoomService {
             throw new RuntimeException("level not allowed");
         Set<Room> rooms = roomRepo.getRooms();
         Queue<CareHistory> history = careHistoryRepo.getHistory();
-        Optional<Room> maybeInRoom = rooms.stream().filter(r -> r.getPatient().getName().equals(name)).findFirst();
+        Optional<Room> maybeInRoom = rooms.stream().filter(r -> {
+            if(r.getOccupied())
+                return r.getPatient().getName().equals(name);
+            else
+                return false;
+        }).findFirst();
         Optional<CareHistory> maybeInHistory = history.stream().filter(ch -> ch.getPatient().getName().equals(name))
                 .findFirst();
         if (maybeInRoom.isPresent())
@@ -58,7 +63,7 @@ public class WaitingRoomServiceImpl implements WaitingRoomService {
     @Override
     public Integer checkPatient(String name) {
         TreeSet<Patient> patients = patientRepo.getPatients();
-        Patient patient = patientRepo.getPatient(name).orElseThrow();
+        Patient patient = patientRepo.getPatient(name).orElseThrow(()->new RuntimeException("No patient found with under this name: "+name));
         int out = 0;
         for (Patient p : patients) {
             if (p.equals(patient))
@@ -70,7 +75,7 @@ public class WaitingRoomServiceImpl implements WaitingRoomService {
 
     @Override
     public Patient getPatient(String name) {
-        return patientRepo.getPatient(name).orElseThrow();
+        return patientRepo.getPatient(name).orElseThrow(()-> new RuntimeException("No patient found under this name: "+name));
     }
 
 }

@@ -5,6 +5,7 @@ import ar.edu.itba.pod.tpe1.client.Client;
 import ar.edu.itba.pod.tpe1.client.admin.actions.AddDoctorAction;
 import ar.edu.itba.pod.tpe1.client.admin.actions.AddRoomAction;
 import ar.edu.itba.pod.tpe1.client.admin.actions.CheckDoctorAction;
+import ar.edu.itba.pod.tpe1.client.admin.actions.SetDoctorAction;
 
 import java.util.function.Supplier;
 

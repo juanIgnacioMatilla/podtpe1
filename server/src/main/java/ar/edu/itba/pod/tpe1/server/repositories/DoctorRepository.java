@@ -1,14 +1,12 @@
 package ar.edu.itba.pod.tpe1.server.repositories;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
 import ar.edu.itba.pod.tpe1.server.models.Doctor;
 import doctorPagerService.DoctorPagerServiceOuterClass;
-import doctorPagerService.DoctorPagerServiceOuterClass.NotificationResponse;
 import io.grpc.stub.StreamObserver;
 import models.doctor.DoctorOuterClass;
 
@@ -66,7 +64,7 @@ public class DoctorRepository {
                 .map(d -> {
                     if (d.getPageable())
                         d.getObserver().onNext(DoctorPagerServiceOuterClass.NotificationResponse.newBuilder()
-                                .setStatus(d.toString() + " status changed to " + status).build());
+                                .setChangeStatus(d.toString() + " status changed to " + status).build());
                     d.setStatus(status);
                     return d;
                 });

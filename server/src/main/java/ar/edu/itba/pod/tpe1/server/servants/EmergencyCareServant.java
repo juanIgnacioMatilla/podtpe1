@@ -93,7 +93,7 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
             if (request.getPatientName().isEmpty()) {
                 throw new IllegalArgumentException("Patient name is required");
             }
-            if (request.getRoomNumber() == 0) {
+            if (request.getRoomNumber() <= 0) {
                 throw new IllegalArgumentException("Room number is invalid");
             }
 

@@ -1,12 +1,14 @@
-package ar.edu.itba.pod.tpe1.client.query;
+package ar.edu.itba.pod.tpe1.client.query.actions;
 
 import administrationService.AdministrationServiceGrpc;
 import administrationService.AdministrationServiceOuterClass;
 import ar.edu.itba.pod.tpe1.client.Action;
 import io.grpc.ManagedChannel;
+import models.patient.PatientOuterClass.Patient;
 import models.room.RoomOuterClass.Room;
 import queryService.QueryServiceGrpc;
 import queryService.QueryServiceOuterClass.QueryRoomsResponse;
+import queryService.QueryServiceOuterClass.QueryWaitingRoomResponse;
 
 import java.io.FileWriter;
 import java.io.PrintWriter;
@@ -15,11 +17,11 @@ import java.util.List;
 
 import com.google.protobuf.Empty;
 
-public class QueryRoomsAction extends Action {
+public class QueryWaitingRoomAction extends Action {
 
     private static final String PATH = "outPath";
 
-    public QueryRoomsAction() {
+    public QueryWaitingRoomAction() {
         super(List.of(PATH), Collections.emptyList());
     }
 
@@ -27,19 +29,13 @@ public class QueryRoomsAction extends Action {
     public void run(ManagedChannel managedChannel) {
         QueryServiceGrpc.QueryServiceBlockingStub blockingStub = QueryServiceGrpc.newBlockingStub(managedChannel);
         String path = this.arguments.get(PATH);
-        QueryRoomsResponse response = blockingStub.queryRooms(Empty.newBuilder().build());
-        System.out.println(response.getRoomsList());
+
+        QueryWaitingRoomResponse response = blockingStub.queryWaitingRoom(Empty.newBuilder().build());
         if (response.getSuccess()) {
             try (PrintWriter out = new PrintWriter(new FileWriter(path))) {
-                out.println("Room,Status,Patient,Doctor");
-                for (Room r : response.getRoomsList()) {
-                    if (r.getOccupied()) {
-                        out.println(r.getRoomNumber() + "," + r.getOccupied() + "," + r.getPatient().getName() + " ("
-                                + r.getPatient().getLevel() + ")"
-                                + "," + r.getDoctor().getName() + " (" + r.getDoctor().getLevel() + ")");
-                    } else {
-                        out.println(r.getRoomNumber() + ",Free," + ",");
-                    }
+                out.println("Patient,Level");
+                for (Patient p : response.getPatientsList()) {
+                    out.println(p.getName() + ",(" + p.getLevel() + ")");
                 }
             } catch (Exception e) {
                 // logger.error(e.getMessage());
@@ -47,6 +43,5 @@ public class QueryRoomsAction extends Action {
         } else {
             System.out.println(response.getErrorMessage());
         }
-
     }
 }

@@ -24,7 +24,7 @@ public class NotificationServiceImpl implements NotificationService {
         if (doctor.getPageable())
             throw new RuntimeException("Doctor is already registered for paging");
         Optional<Doctor> optDoc = doctorRepo.registerDoctorNotif(doctor, responseObserver);
-        Doctor doc = optDoc.orElseThrow(RuntimeException::new);
+        Doctor doc = optDoc.orElseThrow(()->new RuntimeException("No doctor found"));
         doc.getObserver().onNext(DoctorPagerServiceOuterClass.NotificationResponse.newBuilder()
                 .setRegister(doctor.toString() + " registred succesfully for pager").build());
         return doc;
@@ -34,7 +34,7 @@ public class NotificationServiceImpl implements NotificationService {
         if (!doctor.getPageable())
             throw new RuntimeException("Doctor is not registered for paging");
         Optional<Doctor> optDoc = doctorRepo.unregisterDoctorNotif(doctor);
-        return optDoc.orElseThrow(RuntimeException::new);
+        return optDoc.orElseThrow(()-> new RuntimeException("No doctor found"));
     }
 
 }

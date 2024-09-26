@@ -2,6 +2,9 @@ package ar.edu.itba.pod.tpe1.client.query;
 
 import ar.edu.itba.pod.tpe1.client.Action;
 import ar.edu.itba.pod.tpe1.client.Client;
+import ar.edu.itba.pod.tpe1.client.query.actions.QueryCaresAction;
+import ar.edu.itba.pod.tpe1.client.query.actions.QueryRoomsAction;
+import ar.edu.itba.pod.tpe1.client.query.actions.QueryWaitingRoomAction;
 
 import java.util.function.Supplier;
 
@@ -24,7 +27,7 @@ public class QueryClient extends Client {
 
     private enum QueryAction {
         QUERY_ROOMS("queryRooms", QueryRoomsAction::new),
-        QUERY_WAITING_ROOM("queryWaitingRoom",QueryWaitingRoomAction::new),
+        QUERY_WAITING_ROOM("queryWaitingRoom", QueryWaitingRoomAction::new),
         QUERY_CARES("queryCares", QueryCaresAction::new);
 
         private String actionStr;

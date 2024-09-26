@@ -12,6 +12,7 @@ import ar.edu.itba.pod.tpe1.server.repositories.DoctorRepository;
 import ar.edu.itba.pod.tpe1.server.repositories.PatientRepository;
 import ar.edu.itba.pod.tpe1.server.repositories.RoomRepository;
 import ar.edu.itba.pod.tpe1.server.services.interfaces.EmergencyService;
+import doctorPagerService.DoctorPagerServiceOuterClass;
 import models.doctor.DoctorOuterClass;
 
 import javax.print.Doc;
@@ -23,7 +24,7 @@ public class EmergencyServiceImpl implements EmergencyService {
     private RoomRepository roomRepo;
 
     public EmergencyServiceImpl(PatientRepository patientRepository, DoctorRepository doctorRepository,
-            CareHistoryRepository careHistoryRepository, RoomRepository roomRepository) {
+                                CareHistoryRepository careHistoryRepository, RoomRepository roomRepository) {
         this.doctorRepo = doctorRepository;
         this.patientRepo = patientRepository;
         this.careRepo = careHistoryRepository;
@@ -110,15 +111,20 @@ public class EmergencyServiceImpl implements EmergencyService {
 
     @Override
     public Room dischargePatient(Integer roomId, String doctorName, String patientName) {
+        if (doctorRepo.getDoctorByName(doctorName).isEmpty())
+            throw new IllegalArgumentException("Doctor with name " + patientName + " does not exists");
+
         Room room = roomRepo.getRooms().stream()
                 .filter(r -> r.getId().equals(roomId))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Room with number " + roomId + " not found"));
+        if (!room.getOccupied())
+            throw new RuntimeException("Room #" + roomId + " is not occupied cannot be vacated");
         Doctor doctor = room.getDoctor();
         Patient patient = room.getPatient();
-        if (!patient.getName().equals(patientName))
+        if (Objects.isNull(patient) || !patient.getName().equals(patientName))
             throw new IllegalArgumentException("Patient with name " + patientName + " not in Room #" + roomId);
-        if (!doctor.getName().equals(doctorName))
+        if (Objects.isNull(doctor) ||!doctor.getName().equals(doctorName))
             throw new IllegalArgumentException("Doctor with name " + doctorName + " not in Room #" + roomId);
 
         careRepo.addToHistory(new CareHistory(room.getDoctor(), room.getPatient(), roomId));
@@ -130,7 +136,7 @@ public class EmergencyServiceImpl implements EmergencyService {
         outputRoom.setDoctor(doctor);
         if (doctor.getPageable())
             doctor.getObserver().onNext(DoctorPagerServiceOuterClass.NotificationResponse.newBuilder()
-                    .setFinishattending(patient.toString() + " has been discharged from " + doctor.toString()
+                    .setFinishAttending(patient.toString() + " has been discharged from " + doctor.toString()
                             + " and the " + room.toString() + " is now Free")
                     .build());
         return outputRoom;
