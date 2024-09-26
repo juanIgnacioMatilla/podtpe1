@@ -47,16 +47,19 @@ public class EmergencyServiceImpl implements EmergencyService {
         Doctor toAttend = null;
         if (patients.isEmpty())
             throw new RuntimeException("No patients waiting to be attended");
-        while (toAttend == null && !patients.isEmpty()) {
-            toCare = patients.first();
-            for (Doctor doctor : doctors) {
-                if (doctor.canCare(toCare.getEmergencyLevel())) {
-                    toAttend = doctor;
-                    break;
+        synchronized (patients) {
+            while (toAttend == null && !patients.isEmpty()) {
+                toCare = patients.first();
+
+                for (Doctor doctor : doctors) {
+                    if (doctor.canCare(toCare.getEmergencyLevel())) {
+                        toAttend = doctor;
+                        break;
+                    }
                 }
+                if (toAttend == null)
+                    patients.remove(toCare);
             }
-            if (toAttend == null)
-                patients.remove(toCare);
         }
         if (toCare == null)
             throw new RuntimeException("No patients waiting to be cared for");
@@ -73,7 +76,7 @@ public class EmergencyServiceImpl implements EmergencyService {
         return outputRoom;
     }
 
-    public List<Room> careAllPatients() {
+    public synchronized List<Room> careAllPatients() {
         Set<Room> rooms = roomRepo.getRooms();
         List<Room> out = new ArrayList<>();
         TreeSet<Patient> patients = patientRepo.getPatients();

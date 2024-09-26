@@ -38,7 +38,7 @@ public class QueryWaitingRoomAction extends Action {
                     out.println(p.getName() + ",(" + p.getLevel() + ")");
                 }
             } catch (Exception e) {
-                // logger.error(e.getMessage());
+                System.err.println(e.getMessage());
             }
         } else {
             System.out.println(response.getErrorMessage());

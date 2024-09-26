@@ -61,7 +61,7 @@ public class WaitingRoomServiceImpl implements WaitingRoomService {
     }
 
     @Override
-    public Integer checkPatient(String name) {
+    public synchronized Integer checkPatient(String name) {
         TreeSet<Patient> patients = patientRepo.getPatients();
         Patient patient = patientRepo.getPatient(name).orElseThrow(()->new RuntimeException("No patient found with under this name: "+name));
         int out = 0;

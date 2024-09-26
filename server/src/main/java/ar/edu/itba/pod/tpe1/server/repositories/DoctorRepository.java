@@ -25,13 +25,13 @@ public class DoctorRepository {
         return new TreeSet<>(doctors);
     }
 
-    public Optional<Doctor> getDoctorByName(String name) {
+    public synchronized Optional<Doctor> getDoctorByName(String name) {
         return doctors.stream()
                 .filter(d -> d.getName().equals(name))
                 .findFirst();
     }
 
-    public Optional<Doctor> registerDoctorNotif(Doctor doctor,
+    public synchronized Optional<Doctor> registerDoctorNotif(Doctor doctor,
             StreamObserver<DoctorPagerServiceOuterClass.NotificationResponse> responseObserver) {
 
         return doctors.stream()
@@ -44,7 +44,7 @@ public class DoctorRepository {
                 });
     }
 
-    public Optional<Doctor> unregisterDoctorNotif(Doctor doctor) {
+    public synchronized Optional<Doctor> unregisterDoctorNotif(Doctor doctor) {
         return doctors.stream()
                 .filter(d -> d.equals(doctor))
                 .findFirst()
@@ -57,7 +57,7 @@ public class DoctorRepository {
                 });
     }
 
-    public Optional<Doctor> setStatus(Doctor doctor, DoctorOuterClass.DoctorStatus status) {
+    public synchronized Optional<Doctor> setStatus(Doctor doctor, DoctorOuterClass.DoctorStatus status) {
         return doctors.stream()
                 .filter(d -> d.equals(doctor))
                 .findFirst()

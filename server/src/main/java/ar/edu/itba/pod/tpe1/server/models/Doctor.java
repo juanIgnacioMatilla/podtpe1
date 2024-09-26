@@ -8,7 +8,7 @@ import doctorPagerService.DoctorPagerServiceOuterClass;
 import io.grpc.stub.StreamObserver;
 
 public class Doctor implements Comparable<Doctor> {
-    private String name;
+    private final String name;
     private Integer level;
     private DoctorOuterClass.DoctorStatus status;
     private Boolean pageable;

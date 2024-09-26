@@ -28,7 +28,7 @@ public class RoomRepository {
         return aux;
     }
 
-    public Optional<Room> updateRoom(Integer roomId, Patient patient, Doctor doctor, Boolean occupied) {
+    public synchronized Optional<Room> updateRoom(Integer roomId, Patient patient, Doctor doctor, Boolean occupied) {
         return rooms.stream()
                 .filter(r -> r.getId().equals(roomId))
                 .findFirst()

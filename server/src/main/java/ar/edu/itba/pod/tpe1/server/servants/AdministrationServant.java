@@ -75,11 +75,6 @@ public class AdministrationServant extends AdministrationServiceGrpc.Administrat
                     .setStatus(updatedDoctor.getStatus())
                     .build());
             responseBuilder.setSuccess(true);
-            if (updatedDoctor.getPageable()) {
-                updatedDoctor.getObserver().onNext(NotificationResponse.newBuilder()
-                        .setChangeStatus(updatedDoctor.toString() + "is now " + updatedDoctor.getStatus().toString())
-                        .build());
-            }
         } catch (IllegalArgumentException e) {
             responseBuilder
                     .setSuccess(false)

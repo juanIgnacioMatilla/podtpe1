@@ -28,7 +28,6 @@ public class QueryRoomsAction extends Action {
         QueryServiceGrpc.QueryServiceBlockingStub blockingStub = QueryServiceGrpc.newBlockingStub(managedChannel);
         String path = this.arguments.get(PATH);
         QueryRoomsResponse response = blockingStub.queryRooms(Empty.newBuilder().build());
-        System.out.println(response.getRoomsList());
         if (response.getSuccess()) {
             try (PrintWriter out = new PrintWriter(new FileWriter(path))) {
                 out.println("Room,Status,Patient,Doctor");
@@ -42,7 +41,7 @@ public class QueryRoomsAction extends Action {
                     }
                 }
             } catch (Exception e) {
-                // logger.error(e.getMessage());
+                System.err.println(e.getMessage());
             }
         } else {
             System.out.println(response.getErrorMessage());

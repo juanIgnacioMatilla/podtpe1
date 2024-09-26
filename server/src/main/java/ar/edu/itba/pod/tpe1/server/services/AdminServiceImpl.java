@@ -39,7 +39,6 @@ public class AdminServiceImpl implements AdminService {
         Doctor doctor = getDoctor(doctorName);
         if (doctor.getStatus() == DoctorOuterClass.DoctorStatus.ATTENDING)
             throw new RuntimeException("Doctor is attending, status can't be affected");
-        // TODO: check wheter or not the doctr it can change his status
         return doctorRepository.setStatus(doctor, status)
                 .orElseThrow(() -> new RuntimeException("No doctor under that name"));
     }

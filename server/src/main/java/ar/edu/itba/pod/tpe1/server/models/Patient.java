@@ -7,9 +7,9 @@ import java.time.Instant;
 import java.util.Objects;
 
 public class Patient implements Comparable<Patient> {
-    private String name;
+    private final String name;
     private Integer emergencyLevel;
-    private LocalDateTime timeCreated;
+    private final LocalDateTime timeCreated;
 
     public Patient(String name, Integer emergencyLevel) {
         this.name = name;

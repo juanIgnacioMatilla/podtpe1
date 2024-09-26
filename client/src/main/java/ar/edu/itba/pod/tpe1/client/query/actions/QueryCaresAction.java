@@ -40,7 +40,7 @@ public class QueryCaresAction extends Action {
                     +","+ch.getDoctor().getName() + " (" + ch.getDoctor().getLevel()+")" );
             }
         }catch(Exception e){
-            //logger.error(e.getMessage());
+            System.err.println(e.getMessage());
         }
     }
 }

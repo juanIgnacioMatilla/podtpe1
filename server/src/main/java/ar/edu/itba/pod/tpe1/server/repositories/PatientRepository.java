@@ -28,7 +28,7 @@ public class PatientRepository {
         patients.remove(toCare);
     }
 
-    public Optional<Patient> getPatient(String name){
+    public synchronized Optional<Patient> getPatient(String name){
         return patients.stream()
                 .filter(patient -> patient.getName().equals(name))
                 .findFirst();
