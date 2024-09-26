@@ -85,6 +85,5 @@ public class RegisterAction extends Action {
             System.err.println("Thread was interrupted: " + e.getMessage());
         }
 
-        System.out.println("Registration action completed.");
     }
 }

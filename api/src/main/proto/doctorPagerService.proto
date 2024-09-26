@@ -3,7 +3,7 @@ syntax = "proto3";
 package doctorPagerService;
 import "models/doctor.proto";
 service DoctorPagerService {
-  rpc RegisterDoctor (RegisterDoctorRequest) returns (NotificationResponse);
+  rpc RegisterDoctor (RegisterDoctorRequest) returns ( stream NotificationResponse);
   rpc UnregisterDoctor (UnregisterDoctorRequest) returns (UnregisterDoctorResponse);
 }
 

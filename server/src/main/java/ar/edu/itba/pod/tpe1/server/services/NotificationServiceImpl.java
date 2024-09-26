@@ -22,7 +22,9 @@ public class NotificationServiceImpl implements NotificationService {
     public Doctor register(Doctor doctor,
             StreamObserver<DoctorPagerServiceOuterClass.NotificationResponse> responseObserver) {
         Optional<Doctor> optDoc = doctorRepo.registerDoctorNotif(doctor, responseObserver);
-        return optDoc.orElseThrow(RuntimeException::new);
+        Doctor doc = optDoc.orElseThrow(RuntimeException::new);
+        doc.getObserver().onNext(DoctorPagerServiceOuterClass.NotificationResponse.newBuilder().setRegister(doctor.toString() + " registred succesfully for pager").build());
+        return doc;
     }
 
     public Doctor unregister(Doctor doctor) {

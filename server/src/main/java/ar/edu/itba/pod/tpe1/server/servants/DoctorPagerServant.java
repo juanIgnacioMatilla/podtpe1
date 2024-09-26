@@ -27,8 +27,6 @@ public class DoctorPagerServant extends DoctorPagerServiceGrpc.DoctorPagerServic
         }
         Doctor doctor = adminService.getDoctor(request.getDoctorName());
         notificationService.register(doctor, responseObserver);
-        responseObserver
-                .onNext();
     }
 
     @Override

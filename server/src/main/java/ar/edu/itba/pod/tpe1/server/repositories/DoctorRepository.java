@@ -35,15 +35,14 @@ public class DoctorRepository {
 
     public Optional<Doctor> registerDoctorNotif(Doctor doctor,
             StreamObserver<DoctorPagerServiceOuterClass.NotificationResponse> responseObserver) {
-        return doctors.stream()
+      
+  
+      return doctors.stream()
                 .filter(d -> d.equals(doctor))
                 .findFirst()
                 .map(d -> {
                     d.setPageable(true);
                     d.setObserver(responseObserver);
-
-                    d.getObserver().onNext(DoctorPagerServiceOuterClass.NotificationResponse
-                            .newBuilder().setRegister(doctor.toString() + " registred succesfully for pager").build());
                     return d;
                 });
     }
@@ -54,6 +53,7 @@ public class DoctorRepository {
                 .findFirst()
                 .map(d -> {
                     d.setPageable(false);
+                    d.getObserver().onCompleted();
                     return d;
                 });
     }
@@ -64,10 +64,6 @@ public class DoctorRepository {
                 .findFirst()
                 .map(d -> {
                     d.setStatus(status);
-                    if (d.getPageable())
-                        d.getObserver().onNext(NotificationResponse.newBuilder()
-                                .setChangeStatus(d.toString() + "is now " + d.getStatus().toString())
-                                .build());
                     return d;
                 });
     }
