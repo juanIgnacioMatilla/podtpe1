@@ -37,7 +37,6 @@ public class RegisterAction extends Action {
 
             @Override
             public void onNext(NotificationResponse registerDoctorResponse) {
-                System.out.println("hola");
                 String output = getMessage(registerDoctorResponse.getNotificationCase().getNumber(),
                         registerDoctorResponse);
                 System.out.println(output);
@@ -52,8 +51,6 @@ public class RegisterAction extends Action {
 
             @Override
             public void onCompleted() {
-
-                System.out.println("Server completed sending notifications.");
                 latch.countDown();
             }
 
@@ -67,6 +64,8 @@ public class RegisterAction extends Action {
                         return response.getFinishAttending();
                     case 4:
                         return response.getRegister();
+                    case 5:
+                        return response.getUnregister();
                     default:
                         break;
                 }
