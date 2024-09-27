@@ -24,7 +24,7 @@ public class EmergencyServiceImpl implements EmergencyService {
     private RoomRepository roomRepo;
 
     public EmergencyServiceImpl(PatientRepository patientRepository, DoctorRepository doctorRepository,
-                                CareHistoryRepository careHistoryRepository, RoomRepository roomRepository) {
+            CareHistoryRepository careHistoryRepository, RoomRepository roomRepository) {
         this.doctorRepo = doctorRepository;
         this.patientRepo = patientRepository;
         this.careRepo = careHistoryRepository;
@@ -114,8 +114,9 @@ public class EmergencyServiceImpl implements EmergencyService {
 
     @Override
     public Room dischargePatient(Integer roomId, String doctorName, String patientName) {
-        if (doctorRepo.getDoctorByName(doctorName).isEmpty())
-            throw new IllegalArgumentException("Doctor with name " + patientName + " does not exists");
+        Optional<Doctor> maybeDoctor = doctorRepo.getDoctorByName(doctorName);
+        if (maybeDoctor.isEmpty())
+            throw new IllegalArgumentException("Doctor with name " + doctorName + " does not exists");
 
         Room room = roomRepo.getRooms().stream()
                 .filter(r -> r.getId().equals(roomId))
@@ -127,7 +128,7 @@ public class EmergencyServiceImpl implements EmergencyService {
         Patient patient = room.getPatient();
         if (Objects.isNull(patient) || !patient.getName().equals(patientName))
             throw new IllegalArgumentException("Patient with name " + patientName + " not in Room #" + roomId);
-        if (Objects.isNull(doctor) ||!doctor.getName().equals(doctorName))
+        if (Objects.isNull(doctor) || !doctor.getName().equals(doctorName))
             throw new IllegalArgumentException("Doctor with name " + doctorName + " not in Room #" + roomId);
 
         careRepo.addToHistory(new CareHistory(room.getDoctor(), room.getPatient(), roomId));

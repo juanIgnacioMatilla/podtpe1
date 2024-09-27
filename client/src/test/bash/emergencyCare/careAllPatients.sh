@@ -1,6 +1,11 @@
 cd ../../../../target
 tar -xzf ./tpe1-g12-client-2024.1Q-bin.tar.gz
 cd ./tpe1-g12-client-2024.1Q
+
+chmod +x administrationClient.sh
+chmod +x emergencyCareClient.sh
+chmod +x waitingRoomClient.sh
+
 #ROOMS
 ./administrationClient.sh -DserverAddress=localhost:50051 -Daction=addRoom
 ./administrationClient.sh -DserverAddress=localhost:50051 -Daction=addRoom
@@ -23,3 +28,7 @@ cd ./tpe1-g12-client-2024.1Q
 ./emergencyCareClient.sh -DserverAddress=localhost:50051 -Daction=carePatient -Droom=2
 #CAREALLPATIENTS
 ./emergencyCareClient.sh -DserverAddress=localhost:50051 -Daction=careAllPatients
+
+./emergencyCareClient.sh -DserverAddress=localhost:50051 -Daction=dischargePatient -Droom=2 -Ddoctor=Mauro -Dpatient=Papo
+./emergencyCareClient.sh -DserverAddress=localhost:50051 -Daction=dischargePatient -Droom=1 -Ddoctor=Juan -Dpatient=Dillom
+

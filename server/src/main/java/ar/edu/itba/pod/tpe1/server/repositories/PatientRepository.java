@@ -9,7 +9,7 @@ public class PatientRepository {
     private Set<Patient> patients;
 
     public PatientRepository() {
-        patients = Collections.synchronizedSet(new TreeSet<>());        
+        patients = Collections.synchronizedSet(new TreeSet<>());
     }
 
     public TreeSet<Patient> getPatients() {
@@ -23,12 +23,12 @@ public class PatientRepository {
     }
 
     public void removeFromWaitingList(Patient toCare) {
-        if (toCare == null || toCare.getEmergencyLevel() >= 5 || toCare.getEmergencyLevel() <= 0)
+        if (toCare == null)
             return;
         patients.remove(toCare);
     }
 
-    public synchronized Optional<Patient> getPatient(String name){
+    public synchronized Optional<Patient> getPatient(String name) {
         return patients.stream()
                 .filter(patient -> patient.getName().equals(name))
                 .findFirst();

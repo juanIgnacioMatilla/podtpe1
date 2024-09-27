@@ -2,6 +2,7 @@ package ar.edu.itba.pod.tpe1.server.services;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import ar.edu.itba.pod.tpe1.server.models.CareHistory;
 import ar.edu.itba.pod.tpe1.server.models.Patient;

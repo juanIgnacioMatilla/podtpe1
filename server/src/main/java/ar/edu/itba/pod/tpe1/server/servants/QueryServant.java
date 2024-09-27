@@ -25,40 +25,38 @@ public class QueryServant extends QueryServiceGrpc.QueryServiceImplBase {
 
     @Override
     public void queryRooms(Empty request, StreamObserver<QueryServiceOuterClass.QueryRoomsResponse> responseObserver) {
-        QueryServiceOuterClass.QueryRoomsResponse.Builder responseBuilder = QueryServiceOuterClass.QueryRoomsResponse.newBuilder();
+        QueryServiceOuterClass.QueryRoomsResponse.Builder responseBuilder = QueryServiceOuterClass.QueryRoomsResponse
+                .newBuilder();
         try {
             List<Room> rooms = queryService.queryRooms();
             List<RoomOuterClass.Room> roomList = rooms.stream().map(room -> {
-                    RoomOuterClass.Room roomProto;
-                    if (room.getOccupied()) {
-                        roomProto = RoomOuterClass.Room.newBuilder().
-                                setDoctor(
-                                        DoctorOuterClass.Doctor.newBuilder()
-                                                .setName(room.getDoctor().getName())
-                                                .setLevel(room.getDoctor().getLevel())
-                                                .setStatus(room.getDoctor().getStatus())
-                                                .build())
-                                .setPatient(
-                                        PatientOuterClass.Patient.newBuilder()
-                                                .setName(room.getPatient().getName())
-                                                .setLevel(room.getPatient().getEmergencyLevel())
-                                                .build()
-                                )
-                                .setOccupied(room.getOccupied())
-                                .setRoomNumber(room.getId())
-                                .build();
+                RoomOuterClass.Room roomProto;
+                if (room.getOccupied()) {
+                    roomProto = RoomOuterClass.Room.newBuilder().setDoctor(
+                            DoctorOuterClass.Doctor.newBuilder()
+                                    .setName(room.getDoctor().getName())
+                                    .setLevel(room.getDoctor().getLevel())
+                                    .setStatus(room.getDoctor().getStatus())
+                                    .build())
+                            .setPatient(
+                                    PatientOuterClass.Patient.newBuilder()
+                                            .setName(room.getPatient().getName())
+                                            .setLevel(room.getPatient().getEmergencyLevel())
+                                            .build())
+                            .setOccupied(room.getOccupied())
+                            .setRoomNumber(room.getId())
+                            .build();
 
-                    } else {
-                        roomProto = RoomOuterClass.Room.newBuilder()
-                                .setOccupied(room.getOccupied())
-                                .setRoomNumber(room.getId())
-                                .build();
-                    }
-                    return roomProto;
+                } else {
+                    roomProto = RoomOuterClass.Room.newBuilder()
+                            .setOccupied(room.getOccupied())
+                            .setRoomNumber(room.getId())
+                            .build();
                 }
-        ).toList();
-        responseBuilder.addAllRooms(roomList);            
-        responseBuilder.setSuccess(true);
+                return roomProto;
+            }).toList();
+            responseBuilder.addAllRooms(roomList);
+            responseBuilder.setSuccess(true);
         } catch (RuntimeException e) {
             responseBuilder
                     .setSuccess(false)
@@ -69,17 +67,18 @@ public class QueryServant extends QueryServiceGrpc.QueryServiceImplBase {
     }
 
     @Override
-    public void queryWaitingRoom(Empty request, StreamObserver<QueryServiceOuterClass.QueryWaitingRoomResponse> responseObserver) {
-        QueryServiceOuterClass.QueryWaitingRoomResponse.Builder responseBuilder = QueryServiceOuterClass.QueryWaitingRoomResponse.newBuilder();
+    public void queryWaitingRoom(Empty request,
+            StreamObserver<QueryServiceOuterClass.QueryWaitingRoomResponse> responseObserver) {
+        QueryServiceOuterClass.QueryWaitingRoomResponse.Builder responseBuilder = QueryServiceOuterClass.QueryWaitingRoomResponse
+                .newBuilder();
         try {
             List<Patient> waitingRoom = queryService.queryWaitingRoom();
             List<PatientOuterClass.Patient> patients = waitingRoom.stream()
-                    .map(patient ->
-                    PatientOuterClass.Patient.newBuilder()
+                    .map(patient -> PatientOuterClass.Patient.newBuilder()
                             .setName(patient.getName())
                             .setLevel(patient.getEmergencyLevel())
-                            .build()
-            ).toList();
+                            .build())
+                    .toList();
             responseBuilder.addAllPatients(patients);
             responseBuilder.setSuccess(true);
         } catch (RuntimeException e) {
@@ -92,32 +91,32 @@ public class QueryServant extends QueryServiceGrpc.QueryServiceImplBase {
     }
 
     @Override
-    public void queryCares(QueryServiceOuterClass.QueryCaresRequest request, StreamObserver<QueryServiceOuterClass.QueryCaresResponse> responseObserver) {
-        QueryServiceOuterClass.QueryCaresResponse.Builder responseBuilder = QueryServiceOuterClass.QueryCaresResponse.newBuilder();
+    public void queryCares(QueryServiceOuterClass.QueryCaresRequest request,
+            StreamObserver<QueryServiceOuterClass.QueryCaresResponse> responseObserver) {
+        QueryServiceOuterClass.QueryCaresResponse.Builder responseBuilder = QueryServiceOuterClass.QueryCaresResponse
+                .newBuilder();
         try {
             List<CareHistory> careHistories;
-            if(request.hasRoomNumber()) {
+            if (request.getRoomNumber() != 0) {
                 careHistories = queryService.queryCares(request.getRoomNumber());
-            }else{
+            } else {
                 careHistories = queryService.queryCares(null);
             }
-            List<CareHistoryOuterClass.CareHistory> careHistoryList = careHistories.stream().map(careHistory ->
-                    CareHistoryOuterClass.CareHistory.newBuilder().
-                            setDoctor(
-                                    DoctorOuterClass.Doctor.newBuilder()
-                                            .setName(careHistory.getDoctor().getName())
-                                            .setLevel(careHistory.getDoctor().getLevel())
-                                            .setStatus(careHistory.getDoctor().getStatus())
-                                            .build())
+            List<CareHistoryOuterClass.CareHistory> careHistoryList = careHistories.stream()
+                    .map(careHistory -> CareHistoryOuterClass.CareHistory.newBuilder().setDoctor(
+                            DoctorOuterClass.Doctor.newBuilder()
+                                    .setName(careHistory.getDoctor().getName())
+                                    .setLevel(careHistory.getDoctor().getLevel())
+                                    .setStatus(careHistory.getDoctor().getStatus())
+                                    .build())
                             .setPatient(
                                     PatientOuterClass.Patient.newBuilder()
                                             .setName(careHistory.getPatient().getName())
                                             .setLevel(careHistory.getPatient().getEmergencyLevel())
-                                            .build()
-                            )
+                                            .build())
                             .setRoomNumber(careHistory.getRoomId())
-                            .build()
-            ).toList();
+                            .build())
+                    .toList();
             responseBuilder.addAllCareHistory(careHistoryList);
             responseBuilder.setSuccess(true);
         } catch (RuntimeException e) {

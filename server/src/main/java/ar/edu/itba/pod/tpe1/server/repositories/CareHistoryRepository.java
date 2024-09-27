@@ -11,8 +11,9 @@ public class CareHistoryRepository {
     public CareHistoryRepository() {
         history = new ConcurrentLinkedQueue<>();
     }
+
     public Queue<CareHistory> getHistory() {
-        return history;
+        return new ConcurrentLinkedQueue<>(history);
     }
 
     public CareHistory addToHistory(CareHistory careHistory) {

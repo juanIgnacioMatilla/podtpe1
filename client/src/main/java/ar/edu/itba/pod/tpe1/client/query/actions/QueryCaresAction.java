@@ -22,24 +22,26 @@ public class QueryCaresAction extends Action {
 
     private static final String PATH = "outPath";
     private static final String roomNumber = "room";
+
     public QueryCaresAction() {
-        super(List.of(PATH), Collections.emptyList());
+        super(List.of(PATH), List.of(roomNumber));
     }
 
     @Override
     public void run(ManagedChannel managedChannel) {
         QueryServiceGrpc.QueryServiceBlockingStub blockingStub = QueryServiceGrpc.newBlockingStub(managedChannel);
         String path = this.arguments.get(PATH);
-        Integer room = Integer.valueOf(this.arguments.get(roomNumber));
+        Integer room = Integer.valueOf(this.arguments.getOrDefault(roomNumber, "0"));
         QueryCaresRequest queryCaresRequest = QueryCaresRequest.newBuilder().setRoomNumber(room).build();
         QueryCaresResponse response = blockingStub.queryCares(queryCaresRequest);
-        try(PrintWriter out = new PrintWriter(new FileWriter(path))){
+        try (PrintWriter out = new PrintWriter(new FileWriter(path))) {
             out.println("Room,Patient,Doctor");
-            for(CareHistory ch : response.getCareHistoryList() ){
-                out.println(ch.getRoomNumber()+","+ch.getPatient().getName()+" (" + ch.getPatient().getLevel()+")"
-                    +","+ch.getDoctor().getName() + " (" + ch.getDoctor().getLevel()+")" );
+            for (CareHistory ch : response.getCareHistoryList()) {
+                out.println(
+                        ch.getRoomNumber() + "," + ch.getPatient().getName() + " (" + ch.getPatient().getLevel() + ")"
+                                + "," + ch.getDoctor().getName() + " (" + ch.getDoctor().getLevel() + ")");
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             System.err.println(e.getMessage());
         }
     }
