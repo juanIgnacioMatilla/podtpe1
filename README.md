@@ -1,6 +1,6 @@
 # Requisitos
 
-Deben tener instalados maven y Java 21 instalados para poder correr el proyecto.
+Deben tener instalados maven y Java 21 para poder correr el proyecto.
 
 # Compilación
 
@@ -22,7 +22,7 @@ chmod +x run_server.sh
 Primero, se debe levantar el servidor, se le puede pasar el puerto a elección a traves de -Dport=[puerto], pero el default es 50051:
 
 ```bash
-./run_server.sh [-Dport=puerto]
+./run_server.sh -Dport=[puerto]
 ```
 
 Luego, para correr cada servicio, se debe ejecutar desde la carpeta raíz del proyecto(es importante agregar el ./run_client.sh al principio del comando):
@@ -58,7 +58,7 @@ Luego, para correr cada servicio, se debe ejecutar desde la carpeta raíz del pr
 ### 5. Servicio de Consulta
 
 ```bash
-./run_client.sh queryClient.sh -DserverAddress=xx.xx.xx.xx:yyyy \
+./run_client.sh ./queryClient.sh -DserverAddress=xx.xx.xx.xx:yyyy \
 -Daction=actionName -DoutPath=filePath.csv [ -Droom=roomNumber ]
 ```
 
